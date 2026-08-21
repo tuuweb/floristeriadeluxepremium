@@ -225,7 +225,7 @@ function OrdersPanel() {
 
   const updateStatus = async (id: string, status: string) => {
     const { error } = await supabase.from("orders").update({ status }).eq("id", id);
-    if (error) return toast.error("No se pudo actualizar");
+    if (error) { toast.error("No se pudo actualizar"); return; }
     toast.success("Estado actualizado");
     qc.invalidateQueries({ queryKey: ordersQuery.queryKey });
   };
@@ -295,7 +295,7 @@ function ProductsPanel() {
   const refresh = () => qc.invalidateQueries({ queryKey: productsQuery.queryKey });
 
   const create = async () => {
-    if (!draft.name || !draft.price_cop) return toast.error("Nombre y precio son obligatorios");
+    if (!draft.name || !draft.price_cop) { toast.error("Nombre y precio son obligatorios"); return; }
     const { error } = await supabase.from("products").insert({
       name: draft.name,
       slug: slugify(draft.name),
@@ -304,7 +304,7 @@ function ProductsPanel() {
       images: [draft.image],
       category_id: draft.category_id || null,
     });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Producto creado");
     setDraft({ name: "", price_cop: "", category_id: "", image: "/img/prod-01.jpg", description: "" });
     refresh();
@@ -312,13 +312,13 @@ function ProductsPanel() {
 
   const patch = async (id: string, values: Partial<Product>) => {
     const { error } = await supabase.from("products").update(values).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     refresh();
   };
 
   const destroy = async (id: string) => {
     const { error } = await supabase.from("products").delete().eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Producto eliminado");
     refresh();
   };
@@ -439,7 +439,7 @@ function CategoriesPanel() {
     const { error } = await supabase
       .from("categories")
       .insert({ name, slug: slugify(name), image_url: image });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Colección creada");
     setName("");
     refresh();
@@ -447,13 +447,13 @@ function CategoriesPanel() {
 
   const patch = async (id: string, values: Partial<Category>) => {
     const { error } = await supabase.from("categories").update(values).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     refresh();
   };
 
   const destroy = async (id: string) => {
     const { error } = await supabase.from("categories").delete().eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     refresh();
   };
 
@@ -542,9 +542,9 @@ function SettingsPanel() {
 
   const save = async () => {
     const rows = Object.entries(draft).map(([key, v]) => ({ key, value: v }));
-    if (rows.length === 0) return toast.info("No hay cambios");
+    if (rows.length === 0) { toast.info("No hay cambios"); return; }
     const { error } = await supabase.from("site_settings").upsert(rows);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Configuración guardada");
     setDraft({});
     qc.invalidateQueries({ queryKey: settingsQuery.queryKey });
