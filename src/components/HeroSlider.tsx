@@ -95,8 +95,8 @@ export default function HeroSlider() {
         </div>
       ))}
 
-      <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-background/20" />
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/60" />
+      <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/55 to-background/10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/10 to-background/35" />
       <div className="diffused-light absolute inset-0" />
       <PetalCanvas density={18} speed={0.75} />
 

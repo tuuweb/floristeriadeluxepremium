@@ -28,7 +28,7 @@ export default function ProductCard({ product, index = 0 }: { product: Product; 
             loading="lazy"
             className="h-full w-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-108"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-70 transition-opacity duration-700 group-hover:opacity-95" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-transparent to-transparent opacity-45 transition-opacity duration-700 group-hover:opacity-95" />
           {product.compare_price_cop ? (
             <span className="absolute top-4 left-4 bg-accent px-3 py-1 text-[9px] tracking-[0.24em] text-accent-foreground uppercase">
               Oferta
