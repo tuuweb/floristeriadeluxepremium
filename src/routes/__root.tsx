@@ -121,22 +121,32 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function ScrollProgress() {
+  const progress = useScrollProgress();
+  return (
+    <div className="scroll-progress" style={{ transform: `scaleX(${progress})` }} aria-hidden="true" />
+  );
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <StoreProvider>
-        <CinematicIntro />
-        <Header />
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <main>
-          <Outlet />
-        </main>
-        <Footer />
-        <CartDrawer />
-        <Toaster position="bottom-center" />
-      </StoreProvider>
+      <LanguageProvider>
+        <StoreProvider>
+          <ScrollProgress />
+          <CinematicIntro />
+          <Header />
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <main>
+            <Outlet />
+          </main>
+          <Footer />
+          <CartDrawer />
+          <Toaster position="bottom-center" />
+        </StoreProvider>
+      </LanguageProvider>
     </QueryClientProvider>
   );
 }
