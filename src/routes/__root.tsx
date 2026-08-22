@@ -124,10 +124,8 @@ function RootShell({ children }: { children: ReactNode }) {
 }
 
 function ScrollProgress() {
-  const progress = useScrollProgress();
-  return (
-    <div className="scroll-progress" style={{ transform: `scaleX(${progress})` }} aria-hidden="true" />
-  );
+  useScrollProgress();
+  return <div className="scroll-progress-bar" aria-hidden="true" />;
 }
 
 function RootComponent() {
