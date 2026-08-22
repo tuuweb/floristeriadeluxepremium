@@ -12,12 +12,12 @@ export const Route = createFileRoute("/catalogo")({
       {
         name: "description",
         content:
-          "Explora ramos, cajas y arreglos de lujo por colección, precio y ocasión. Entrega el mismo día en Bogotá.",
+          "Explora ramos, cajas y arreglos de lujo por colección, precio y ocasión. Entrega el mismo día en Barranquilla.",
       },
       { property: "og:title", content: "Catálogo · Floristería Deluxe Premium" },
       {
         property: "og:description",
-        content: "Ramos, cajas y arreglos florales de lujo con entrega el mismo día en Bogotá.",
+        content: "Ramos, cajas y arreglos florales de lujo con entrega el mismo día en Barranquilla.",
       },
     ],
   }),

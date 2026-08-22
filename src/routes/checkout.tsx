@@ -38,7 +38,7 @@ function Checkout() {
     customer_email: "",
     recipient_name: "",
     address: "",
-    city: "Bogotá",
+    city: "Barranquilla",
     delivery_date: "",
     delivery_slot: SLOTS[0]!,
     dedication: "",
@@ -50,7 +50,7 @@ function Checkout() {
   const freeFrom = Number(settings?.["free_shipping_from_cop"] ?? 350000);
   const shippingDue = subtotal >= freeFrom ? 0 : shipping;
   const total = subtotal + shippingDue;
-  const whatsapp = settings?.["whatsapp_number"] ?? "573001234567";
+  const whatsapp = settings?.["whatsapp_number"] ?? "573006301123";
 
   const set = (key: keyof typeof form, value: string) =>
     setForm((prev) => ({ ...prev, [key]: value }));

@@ -9,12 +9,12 @@ export const Route = createFileRoute("/nosotros")({
       {
         name: "description",
         content:
-          "Conoce el atelier floral Deluxe Premium en Bogotá: flor de grado premium, diseño de autor y entregas cuidadas.",
+          "Conoce el atelier floral Deluxe Premium en Barranquilla: flor de grado premium, diseño de autor y entregas cuidadas.",
       },
       { property: "og:title", content: "El atelier · Deluxe Premium" },
       {
         property: "og:description",
-        content: "Diseño floral de autor con flor premium, hecho a mano en Bogotá.",
+        content: "Diseño floral de autor con flor premium, hecho a mano en Barranquilla.",
       },
     ],
   }),
@@ -40,7 +40,7 @@ function About() {
             Cultivamos <span className="text-lux-gradient italic">momentos</span>, no sólo flores
           </h1>
           <p className="mt-8 max-w-2xl text-base leading-relaxed text-muted-foreground">
-            Floristería Deluxe Premium nació en Bogotá con una idea simple: si una flor va a
+            Floristería Deluxe Premium nació en Barranquilla con una idea simple: si una flor va a
             representar algo importante, debe estar a la altura. Trabajamos con cultivos de la
             sabana y flor importada, en cantidades pequeñas y controladas, para que cada pieza sea
             irrepetible.

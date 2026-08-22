@@ -15,12 +15,12 @@ export const Route = createFileRoute("/producto/$slug")({
       {
         name: "description",
         content:
-          "Arreglo floral de lujo hecho a mano en nuestro atelier de Bogotá, con entrega el mismo día.",
+          "Arreglo floral de lujo hecho a mano en nuestro atelier de Barranquilla, con entrega el mismo día.",
       },
       { property: "og:title", content: "Pieza del atelier · Deluxe Premium" },
       {
         property: "og:description",
-        content: "Arreglo floral de lujo hecho a mano con entrega el mismo día en Bogotá.",
+        content: "Arreglo floral de lujo hecho a mano con entrega el mismo día en Barranquilla.",
       },
     ],
   }),
@@ -115,7 +115,7 @@ function ProductDetail() {
               <Check className="h-4 w-4 text-primary" /> Tarjeta con dedicatoria escrita a mano
             </li>
             <li className="flex items-center gap-2">
-              <Truck className="h-4 w-4 text-primary" /> Entrega el mismo día en Bogotá
+              <Truck className="h-4 w-4 text-primary" /> Entrega el mismo día en Barranquilla
             </li>
           </ul>
 

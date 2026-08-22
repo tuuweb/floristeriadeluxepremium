@@ -81,11 +81,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Floristería Deluxe Premium · Atelier floral en Bogotá" },
+      { title: "Floristería Deluxe Premium · Atelier floral en Barranquilla" },
       {
         name: "description",
         content:
-          "Arreglos florales de lujo hechos a mano en Bogotá. Rosas premium, cajas firmadas y entrega el mismo día.",
+          "Arreglos florales de lujo hechos a mano en Barranquilla. Rosas premium, cajas firmadas y entrega el mismo día.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

@@ -12,12 +12,12 @@ export const Route = createFileRoute("/contacto")({
       {
         name: "description",
         content:
-          "Escríbenos por WhatsApp para pedidos corporativos, eventos o arreglos florales a medida en Bogotá.",
+          "Escríbenos por WhatsApp para pedidos corporativos, eventos o arreglos florales a medida en Barranquilla.",
       },
       { property: "og:title", content: "Contacto · Deluxe Premium" },
       {
         property: "og:description",
-        content: "Pedidos a medida, eventos y arreglos corporativos en Bogotá.",
+        content: "Pedidos a medida, eventos y arreglos corporativos en Barranquilla.",
       },
     ],
   }),
@@ -27,7 +27,7 @@ export const Route = createFileRoute("/contacto")({
 function Contact() {
   useReveal();
   const { data: settings } = useQuery(settingsQuery);
-  const phone = settings?.["whatsapp_number"] ?? "573001234567";
+  const phone = settings?.["whatsapp_number"] ?? "573006301123";
   const [message, setMessage] = useState("");
 
   const field =
@@ -51,11 +51,11 @@ function Contact() {
             </li>
             <li className="flex items-center gap-3">
               <Mail className="h-4 w-4 text-primary" />
-              {settings?.["email"] ?? "hola@floristeriadeluxe.com"}
+              {settings?.["email"] ?? "floristeriadeluxe@gmail.com"}
             </li>
             <li className="flex items-center gap-3">
               <MapPin className="h-4 w-4 text-primary" />
-              {settings?.["address"] ?? "Bogotá, Colombia"}
+              {settings?.["address"] ?? "Barranquilla, Colombia"}
             </li>
           </ul>
         </div>
