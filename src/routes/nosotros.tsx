@@ -41,9 +41,9 @@ function About() {
           </h1>
           <p className="mt-8 max-w-2xl text-base leading-relaxed text-muted-foreground">
             Floristería Deluxe Premium nació en Barranquilla con una idea simple: si una flor va a
-            representar algo importante, debe estar a la altura. Trabajamos con cultivos de la
-            sabana y flor importada, en cantidades pequeñas y controladas, para que cada pieza sea
-            irrepetible.
+            representar algo importante, debe estar a la altura. Trabajamos con cultivos
+            colombianos y flor importada, en cantidades pequeñas y controladas, para que cada pieza
+            sea irrepetible.
           </p>
         </div>
       </section>
