@@ -83,7 +83,8 @@ export default function PetalCanvas({
         sway: Math.random() * Math.PI * 2,
         swaySpeed: 0.006 + Math.random() * 0.012,
         img: Math.floor(Math.random() * images.length),
-        alpha: 0.35 + z * 0.55,
+        // Pétalos translúcidos: se integran con la luz en vez de verse rojos.
+        alpha: 0.1 + z * 0.16,
       };
     };
 
@@ -119,7 +120,10 @@ export default function PetalCanvas({
 
         ctx.save();
         ctx.globalAlpha = p.alpha;
-        ctx.filter = p.z < 0.6 ? "blur(2.5px)" : "none";
+        ctx.filter =
+          p.z < 0.6
+            ? "blur(3px) saturate(0.55) brightness(1.15)"
+            : "blur(0.6px) saturate(0.6) brightness(1.1)";
         ctx.translate(p.x, p.y);
         ctx.rotate(p.rot);
         const ratio = img.naturalHeight / img.naturalWidth || 1;

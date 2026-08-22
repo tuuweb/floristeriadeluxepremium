@@ -13,7 +13,7 @@ export const Route = createFileRoute("/coleccion/$slug")({
         { title: `Colección ${name} · Floristería Deluxe Premium` },
         {
           name: "description",
-          content: `Arreglos florales de lujo de la colección ${name}, hechos a mano en Bogotá con entrega el mismo día.`,
+          content: `Arreglos florales de lujo de la colección ${name}, hechos a mano en Barranquilla con entrega el mismo día.`,
         },
         { property: "og:title", content: `Colección ${name} · Deluxe Premium` },
         {

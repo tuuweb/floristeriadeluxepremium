@@ -9,12 +9,12 @@ export const Route = createFileRoute("/nosotros")({
       {
         name: "description",
         content:
-          "Conoce el atelier floral Deluxe Premium en Bogotá: flor de grado premium, diseño de autor y entregas cuidadas.",
+          "Conoce el atelier floral Deluxe Premium en Barranquilla: flor de grado premium, diseño de autor y entregas cuidadas.",
       },
       { property: "og:title", content: "El atelier · Deluxe Premium" },
       {
         property: "og:description",
-        content: "Diseño floral de autor con flor premium, hecho a mano en Bogotá.",
+        content: "Diseño floral de autor con flor premium, hecho a mano en Barranquilla.",
       },
     ],
   }),
@@ -35,15 +35,15 @@ function About() {
       <section className="relative overflow-hidden">
         <PetalCanvas density={12} speed={0.6} />
         <div className="relative mx-auto max-w-7xl px-5 md:px-8">
-          <p className="eyebrow">El atelier</p>
-          <h1 className="reveal is-in mt-4 max-w-3xl font-display text-5xl leading-[1.02] md:text-7xl">
+          <p className="eyebrow" data-anim="left">El atelier</p>
+          <h1 data-anim="letters" className="mt-4 max-w-3xl font-display text-5xl leading-[1.02] md:text-7xl">
             Cultivamos <span className="text-lux-gradient italic">momentos</span>, no sólo flores
           </h1>
-          <p className="mt-8 max-w-2xl text-base leading-relaxed text-muted-foreground">
-            Floristería Deluxe Premium nació en Bogotá con una idea simple: si una flor va a
-            representar algo importante, debe estar a la altura. Trabajamos con cultivos de la
-            sabana y flor importada, en cantidades pequeñas y controladas, para que cada pieza sea
-            irrepetible.
+          <p data-anim="fade-up" className="mt-8 max-w-2xl text-base leading-relaxed text-muted-foreground">
+            Floristería Deluxe Premium nació en Barranquilla con una idea simple: si una flor va a
+            representar algo importante, debe estar a la altura. Trabajamos con cultivos
+            colombianos y flor importada, en cantidades pequeñas y controladas, para que cada pieza
+            sea irrepetible.
           </p>
         </div>
       </section>
@@ -55,13 +55,13 @@ function About() {
           loading="lazy"
           width={900}
           height={900}
-          className="reveal-blur aspect-square w-full rounded-sm object-cover"
+          data-parallax="0.06" data-anim="clip" className="aspect-square w-full rounded-sm object-cover"
         />
-        <div className="reveal self-center">
-          <h2 className="font-display text-3xl md:text-4xl">Cómo trabajamos</h2>
-          <div className="mt-8 space-y-7">
+        <div className="self-center">
+          <h2 data-anim="clip" className="font-display text-3xl md:text-4xl">Cómo trabajamos</h2>
+          <div className="mt-8 space-y-7" data-stagger="120">
             {STEPS.map((s) => (
-              <div key={s.n} className="flex gap-5">
+              <div key={s.n} className="flex gap-5" data-anim="left">
                 <span className="font-display text-xl text-primary">{s.n}</span>
                 <div>
                   <h3 className="font-display text-xl">{s.t}</h3>
@@ -72,7 +72,7 @@ function About() {
           </div>
           <Link
             to="/catalogo"
-            className="mt-10 inline-block bg-primary px-8 py-4 text-[11px] tracking-[0.26em] text-primary-foreground uppercase"
+            data-anim="zoom" className="press shine mt-10 inline-block bg-primary px-8 py-4 text-[11px] tracking-[0.26em] text-primary-foreground uppercase"
           >
             Ver el catálogo
           </Link>

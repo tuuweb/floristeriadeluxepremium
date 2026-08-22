@@ -17,6 +17,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
 import CinematicIntro from "@/components/CinematicIntro";
+import { LanguageProvider } from "@/lib/i18n";
+import { useScrollProgress } from "@/hooks/use-reveal";
 
 function NotFoundComponent() {
   return (
@@ -81,11 +83,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Floristería Deluxe Premium · Atelier floral en Bogotá" },
+      { title: "Floristería Deluxe Premium · Atelier floral en Barranquilla" },
       {
         name: "description",
         content:
-          "Arreglos florales de lujo hechos a mano en Bogotá. Rosas premium, cajas firmadas y entrega el mismo día.",
+          "Arreglos florales de lujo hechos a mano en Barranquilla. Rosas premium, cajas firmadas y entrega el mismo día.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -121,22 +123,30 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function ScrollProgress() {
+  useScrollProgress();
+  return <div className="scroll-progress-bar" aria-hidden="true" />;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <StoreProvider>
-        <CinematicIntro />
-        <Header />
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <main>
-          <Outlet />
-        </main>
-        <Footer />
-        <CartDrawer />
-        <Toaster position="bottom-center" />
-      </StoreProvider>
+      <LanguageProvider>
+        <StoreProvider>
+          <ScrollProgress />
+          <CinematicIntro />
+          <Header />
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <main>
+            <Outlet />
+          </main>
+          <Footer />
+          <CartDrawer />
+          <Toaster position="bottom-center" />
+        </StoreProvider>
+      </LanguageProvider>
     </QueryClientProvider>
   );
 }

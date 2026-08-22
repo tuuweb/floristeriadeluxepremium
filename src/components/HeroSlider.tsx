@@ -21,7 +21,7 @@ const SCENES: Scene[] = [
     eyebrow: "Colección Signature",
     title: "El lujo",
     accent: "florece de noche",
-    copy: "Composiciones de autor con rosas premium, entregadas el mismo día en Bogotá.",
+    copy: "Composiciones de autor con rosas premium, entregadas el mismo día en Barranquilla.",
     image: "/img/hero-01.jpg",
     to: "/catalogo",
     cta: "Ver colección",
