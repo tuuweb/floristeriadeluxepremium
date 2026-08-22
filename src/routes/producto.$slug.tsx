@@ -62,7 +62,7 @@ function ProductDetail() {
   return (
     <div className="pt-28 pb-24 md:pt-36">
       <div className="mx-auto grid max-w-7xl gap-14 px-5 md:grid-cols-2 md:px-8">
-        <div className="reveal-blur">
+        <div data-anim="clip">
           <div className="overflow-hidden rounded-sm bg-secondary">
             <img
               src={images[imgIndex]}
@@ -89,7 +89,7 @@ function ProductDetail() {
           )}
         </div>
 
-        <div className="reveal">
+        <div data-anim="right">
           <Link to="/catalogo" className="eyebrow hover:text-cream">
             ← Catálogo
           </Link>
