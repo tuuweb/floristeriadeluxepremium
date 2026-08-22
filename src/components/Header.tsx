@@ -30,13 +30,12 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    if (count > prevCount.current) {
-      setPop(true);
-      const id = window.setTimeout(() => setPop(false), 600);
-      prevCount.current = count;
-      return () => window.clearTimeout(id);
-    }
+    const grew = count > prevCount.current;
     prevCount.current = count;
+    if (!grew) return undefined;
+    setPop(true);
+    const id = window.setTimeout(() => setPop(false), 600);
+    return () => window.clearTimeout(id);
   }, [count]);
 
   return (
