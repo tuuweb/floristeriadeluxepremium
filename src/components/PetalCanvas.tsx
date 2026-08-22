@@ -83,7 +83,8 @@ export default function PetalCanvas({
         sway: Math.random() * Math.PI * 2,
         swaySpeed: 0.006 + Math.random() * 0.012,
         img: Math.floor(Math.random() * images.length),
-        alpha: 0.35 + z * 0.55,
+        // Pétalos translúcidos: se integran con la luz en vez de verse rojos.
+        alpha: 0.1 + z * 0.16,
       };
     };
 
