@@ -93,14 +93,14 @@ export default function CinematicIntro() {
           }`}
         >
           <span
-            className={`pointer-events-none absolute -inset-14 rounded-full bg-[radial-gradient(circle,var(--rose-glow),transparent_65%)] ${
+            className={`pointer-events-none absolute -inset-20 rounded-full bg-[radial-gradient(circle,var(--rose-glow),transparent_65%)] ${
               stage >= 2 ? "aura-ring" : "opacity-0"
             }`}
           />
           <img
             src="/logo.png"
             alt="Floristería Deluxe Premium"
-            className="relative h-24 w-auto sm:h-32"
+            className="relative h-40 w-auto sm:h-52 md:h-60"
           />
         </div>
 
