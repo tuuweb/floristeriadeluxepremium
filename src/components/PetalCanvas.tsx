@@ -59,15 +59,48 @@ export default function PetalCanvas({
       return img;
     });
 
+    // Sprites pre-renderizados con el desenfoque "horneado": aplicar
+    // ctx.filter en cada frame era la mayor fuente de lag en celulares.
+    const SPRITE_W = 256;
+    const spriteCache: ({ far: HTMLCanvasElement; near: HTMLCanvasElement } | null)[] =
+      PETAL_SOURCES.map(() => null);
+
+    const spriteFor = (i: number) => {
+      const cached = spriteCache[i];
+      if (cached) return cached;
+      const img = images[i];
+      if (!img || !img.complete || img.naturalWidth === 0) return null;
+      const ratio = img.naturalHeight / img.naturalWidth || 1;
+      const make = (filter: string) => {
+        const c = document.createElement("canvas");
+        c.width = SPRITE_W;
+        c.height = Math.max(1, Math.round(SPRITE_W * ratio));
+        const sctx = c.getContext("2d");
+        if (sctx) {
+          sctx.filter = filter;
+          const pad = 12;
+          sctx.drawImage(img, pad, pad, SPRITE_W - pad * 2, c.height - pad * 2);
+        }
+        return c;
+      };
+      const sprites = {
+        far: make("blur(3px) saturate(0.55) brightness(1.15)"),
+        near: make("blur(0.6px) saturate(0.6) brightness(1.1)"),
+      };
+      spriteCache[i] = sprites;
+      return sprites;
+    };
+
     let width = 0;
     let height = 0;
     let dpr = 1;
     let raf = 0;
     let running = true;
+    let inView = true;
     let petals: Petal[] = [];
 
     const count = () =>
-      Math.max(8, Math.round(density * (window.innerWidth < 768 ? 0.45 : 1)));
+      Math.max(6, Math.round(density * (window.innerWidth < 768 ? 0.35 : 1)));
 
     const makePetal = (initial: boolean): Petal => {
       const z = 0.35 + Math.random() * 0.85;
@@ -89,7 +122,7 @@ export default function PetalCanvas({
     };
 
     const resize = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       const rect = canvas.getBoundingClientRect();
       width = rect.width;
       height = rect.height;
@@ -115,19 +148,16 @@ export default function PetalCanvas({
         if (p.x < -p.size) p.x = width + p.size;
         if (p.x > width + p.size) p.x = -p.size;
 
-        const img = images[p.img];
-        if (!img || !img.complete || img.naturalWidth === 0) continue;
+        const sprites = spriteFor(p.img);
+        if (!sprites) continue;
+        const sprite = p.z < 0.6 ? sprites.far : sprites.near;
 
         ctx.save();
         ctx.globalAlpha = p.alpha;
-        ctx.filter =
-          p.z < 0.6
-            ? "blur(3px) saturate(0.55) brightness(1.15)"
-            : "blur(0.6px) saturate(0.6) brightness(1.1)";
         ctx.translate(p.x, p.y);
         ctx.rotate(p.rot);
-        const ratio = img.naturalHeight / img.naturalWidth || 1;
-        ctx.drawImage(img, -p.size / 2, (-p.size * ratio) / 2, p.size, p.size * ratio);
+        const ratio = sprite.height / sprite.width || 1;
+        ctx.drawImage(sprite, -p.size / 2, (-p.size * ratio) / 2, p.size, p.size * ratio);
         ctx.restore();
       }
       raf = requestAnimationFrame(draw);
@@ -138,21 +168,34 @@ export default function PetalCanvas({
     window.addEventListener("resize", resize);
 
     const io = new IntersectionObserver((entries) => {
-      const visible = entries.some((e) => e.isIntersecting);
-      if (visible && !running) {
+      inView = entries.some((e) => e.isIntersecting);
+      if (inView && !running && !document.hidden) {
         running = true;
         raf = requestAnimationFrame(draw);
-      } else if (!visible && running) {
+      } else if (!inView && running) {
         running = false;
         cancelAnimationFrame(raf);
       }
     });
     io.observe(canvas);
 
+    // Pausa total cuando la pestaña queda en segundo plano.
+    const onVisibility = () => {
+      if (document.hidden && running) {
+        running = false;
+        cancelAnimationFrame(raf);
+      } else if (!document.hidden && inView && !running) {
+        running = true;
+        raf = requestAnimationFrame(draw);
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
     return () => {
       running = false;
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
+      document.removeEventListener("visibilitychange", onVisibility);
       io.disconnect();
     };
   }, [density, speed, burst]);

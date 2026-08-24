@@ -394,8 +394,16 @@
 
 /* ---------- Marco de aura dorado / rosado ---------- */
 
+@property --aura-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
 @keyframes aura-frame-spin {
-  to { transform: rotate(1turn); }
+  to {
+    --aura-angle: 1turn;
+  }
 }
 
 @utility aura-frame {
@@ -406,17 +414,17 @@
 .aura-frame::before {
   content: "";
   position: absolute;
-  inset: -1px;
+  inset: -1.5px;
   z-index: 0;
   border-radius: inherit;
-  padding: 1px;
+  padding: 1.5px;
   background: conic-gradient(
-    from 0deg,
-    oklch(0.79 0.11 84 / 0.85),
-    oklch(0.68 0.19 8 / 0.85),
-    oklch(0.88 0.06 88 / 0.9),
-    oklch(0.68 0.19 8 / 0.6),
-    oklch(0.79 0.11 84 / 0.85)
+    from var(--aura-angle, 0deg),
+    oklch(0.79 0.11 84 / 0.95),
+    oklch(0.68 0.19 8 / 0.9),
+    oklch(0.88 0.06 88 / 0.95),
+    oklch(0.72 0.17 350 / 0.85),
+    oklch(0.79 0.11 84 / 0.95)
   );
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
@@ -426,7 +434,8 @@
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
   mask-composite: exclude;
-  opacity: 0.35;
+  opacity: 0.85;
+  animation: aura-frame-spin 7s linear infinite;
   transition: opacity 0.7s ease;
 }
 
@@ -437,23 +446,23 @@
 .aura-frame::after {
   content: "";
   position: absolute;
-  inset: -22px;
+  inset: -26px;
   z-index: -1;
   border-radius: 999px;
   background: radial-gradient(
     circle at 50% 55%,
-    oklch(0.68 0.2 6 / 0.5),
-    oklch(0.79 0.11 84 / 0.22) 45%,
+    oklch(0.68 0.2 6 / 0.45),
+    oklch(0.79 0.11 84 / 0.2) 45%,
     transparent 70%
   );
-  opacity: 0;
+  opacity: 0.4;
   transition: opacity 0.8s ease;
   filter: blur(18px);
+  animation: aura-pulse 5.5s ease-in-out infinite;
 }
 
 .aura-frame:hover::after {
   opacity: 1;
-  animation: aura-pulse 4s ease-in-out infinite;
 }
 
 /* ---------- Interacciones de clic ---------- */
@@ -512,9 +521,20 @@
     opacity: 1 !important;
     animation: none !important;
   }
-  .aura-frame:hover::after,
+  .aura-frame::before,
+  .aura-frame::after,
   .shine:hover::after,
   .press:active {
     animation: none !important;
+  }
+}
+
+/* En móvil el blur pesado del vidrio provoca repaints costosos al hacer scroll */
+@media (max-width: 768px) {
+  .surface-glass {
+    backdrop-filter: blur(10px) saturate(1.05);
+  }
+  .aura-frame::after {
+    filter: blur(14px);
   }
 }

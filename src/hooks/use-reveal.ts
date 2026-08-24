@@ -58,7 +58,17 @@ export function useReveal() {
     };
 
     scan();
-    const mo = new MutationObserver(() => scan());
+    // Re-escaneo con throttle: sin esto, cada cambio del DOM disparaba un
+    // querySelectorAll completo y trababa el scroll en celulares.
+    let scheduled = false;
+    const mo = new MutationObserver(() => {
+      if (scheduled) return;
+      scheduled = true;
+      requestAnimationFrame(() => {
+        scheduled = false;
+        scan();
+      });
+    });
     mo.observe(document.body, { childList: true, subtree: true });
 
     return () => {
