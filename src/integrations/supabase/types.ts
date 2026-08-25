@@ -50,6 +50,114 @@ export type Database = {
         }
         Relationships: []
       }
+      customer_addresses: {
+        Row: {
+          address: string
+          city: string
+          created_at: string
+          id: string
+          is_default: boolean
+          label: string
+          notes: string
+          recipient_name: string
+          recipient_phone: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address: string
+          city?: string
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          label?: string
+          notes?: string
+          recipient_name?: string
+          recipient_phone?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string
+          city?: string
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          label?: string
+          notes?: string
+          recipient_name?: string
+          recipient_phone?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      gallery_photos: {
+        Row: {
+          caption: string
+          created_at: string
+          customer_name: string
+          id: string
+          image_url: string
+          is_active: boolean
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          caption?: string
+          created_at?: string
+          customer_name?: string
+          id?: string
+          image_url: string
+          is_active?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          caption?: string
+          created_at?: string
+          customer_name?: string
+          id?: string
+          image_url?: string
+          is_active?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      instagram_posts: {
+        Row: {
+          caption: string
+          created_at: string
+          id: string
+          image_url: string
+          is_active: boolean
+          post_url: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          caption?: string
+          created_at?: string
+          id?: string
+          image_url?: string
+          is_active?: boolean
+          post_url: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          caption?: string
+          created_at?: string
+          id?: string
+          image_url?: string
+          is_active?: boolean
+          post_url?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           address: string
@@ -72,6 +180,7 @@ export type Database = {
           subtotal_cop: number
           total_cop: number
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           address: string
@@ -94,6 +203,7 @@ export type Database = {
           subtotal_cop?: number
           total_cop?: number
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           address?: string
@@ -116,6 +226,7 @@ export type Database = {
           subtotal_cop?: number
           total_cop?: number
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -181,6 +292,36 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          phone: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          phone?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          phone?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       site_settings: {
         Row: {
           key: string
@@ -196,6 +337,33 @@ export type Database = {
           key?: string
           updated_at?: string
           value?: string
+        }
+        Relationships: []
+      }
+      translations: {
+        Row: {
+          created_at: string
+          id: string
+          source_hash: string
+          source_text: string
+          target_lang: string
+          translated_text: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          source_hash: string
+          source_text: string
+          target_lang?: string
+          translated_text: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          source_hash?: string
+          source_text?: string
+          target_lang?: string
+          translated_text?: string
         }
         Relationships: []
       }
