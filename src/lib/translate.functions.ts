@@ -29,7 +29,7 @@ export const translateTexts = createServerFn({ method: "POST" })
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const hashes = await Promise.all(unique.map((t) => sha256(t)));
+    const hashes = await Promise.all(unique.map((t) => sha256(`${data.target}:${t}`)));
     const byHash = new Map(hashes.map((h, i) => [h, unique[i] as string]));
 
     const { data: cached } = await supabaseAdmin
@@ -115,7 +115,7 @@ export const translateTexts = createServerFn({ method: "POST" })
       if (rows.length > 0) {
         await supabaseAdmin
           .from("translations")
-          .upsert(rows, { onConflict: "source_hash,target_lang" });
+          .upsert(rows, { onConflict: "source_hash" });
       }
 
       return { map };
