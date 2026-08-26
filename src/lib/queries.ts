@@ -56,6 +56,84 @@ export type Order = {
   created_at: string;
 };
 
+export type Profile = {
+  id: string;
+  user_id: string;
+  full_name: string | null;
+  phone: string | null;
+  email: string | null;
+};
+
+export type CustomerAddress = {
+  id: string;
+  user_id: string;
+  label: string | null;
+  recipient_name: string | null;
+  recipient_phone: string | null;
+  address: string;
+  city: string;
+  notes: string | null;
+  is_default: boolean;
+};
+
+export type GalleryPhoto = {
+  id: string;
+  image_url: string;
+  caption: string | null;
+  customer_name: string | null;
+  sort_order: number;
+  is_active: boolean;
+};
+
+export type InstagramPost = {
+  id: string;
+  post_url: string;
+  image_url: string;
+  caption: string | null;
+  sort_order: number;
+  is_active: boolean;
+};
+
+export const galleryQuery = {
+  queryKey: ["gallery_photos"],
+  queryFn: async (): Promise<GalleryPhoto[]> => {
+    const { data, error } = await supabase
+      .from("gallery_photos")
+      .select("*")
+      .order("sort_order", { ascending: true });
+    if (error) throw error;
+    return (data ?? []) as unknown as GalleryPhoto[];
+  },
+};
+
+export const instagramQuery = {
+  queryKey: ["instagram_posts"],
+  queryFn: async (): Promise<InstagramPost[]> => {
+    const { data, error } = await supabase
+      .from("instagram_posts")
+      .select("*")
+      .order("sort_order", { ascending: true });
+    if (error) throw error;
+    return (data ?? []) as unknown as InstagramPost[];
+  },
+};
+
+/** Sube una imagen al almacén del atelier y devuelve una URL utilizable. */
+export async function uploadMedia(file: File, folder = "productos"): Promise<string> {
+  const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
+  const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  const { error } = await supabase.storage.from("media").upload(path, file, {
+    cacheControl: "31536000",
+    upsert: false,
+  });
+  if (error) throw error;
+  const { data, error: signError } = await supabase.storage
+    .from("media")
+    .createSignedUrl(path, 60 * 60 * 24 * 365 * 5);
+  if (signError || !data?.signedUrl) throw signError ?? new Error("No se pudo firmar la imagen");
+  return data.signedUrl;
+}
+
 export const categoriesQuery = {
   queryKey: ["categories"],
   queryFn: async (): Promise<Category[]> => {
