@@ -4,9 +4,11 @@ import { ArrowUpRight, Clock, Flower2, Gem, Truck } from "lucide-react";
 import HeroSlider from "@/components/HeroSlider";
 import ProductCard from "@/components/ProductCard";
 import PetalCanvas from "@/components/PetalCanvas";
+import GallerySection from "@/components/GallerySection";
+import InstagramSection from "@/components/InstagramSection";
 import { categoriesQuery, productsQuery } from "@/lib/queries";
 import { useParallax, useReveal } from "@/hooks/use-reveal";
-import { useI18n } from "@/lib/i18n";
+import { useContentTranslator, useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -44,6 +46,8 @@ function Home() {
   const { data: categories } = useQuery(categoriesQuery);
   const { data: products } = useQuery(productsQuery);
   const featured = (products ?? []).filter((p) => p.is_featured).slice(0, 6);
+  const collections = (categories ?? []).filter((c) => c.is_active).slice(0, 3);
+  const tc = useContentTranslator(collections.flatMap((c) => [c.name, c.description]));
 
   return (
     <>
@@ -84,14 +88,17 @@ function Home() {
             </h2>
           </div>
 
-          <div className="mt-14 grid gap-7 sm:grid-cols-2 lg:grid-cols-4" data-stagger="130">
-            {(categories ?? []).map((c) => (
+          <div
+            className="mt-12 grid grid-cols-2 gap-4 sm:gap-7 md:mt-14 lg:grid-cols-3"
+            data-stagger="130"
+          >
+            {collections.map((c) => (
               <Link
                 key={c.id}
                 to="/coleccion/$slug"
                 params={{ slug: c.slug }}
                 data-anim="tilt"
-                className="aura-frame press group relative block rounded-sm"
+                className="aura-glow press group relative block rounded-sm"
               >
                 <span className="relative z-1 block overflow-hidden rounded-sm">
                   <img
@@ -156,7 +163,7 @@ function Home() {
       {/* Editorial */}
       <section className="relative overflow-hidden border-t border-border">
         <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 py-24 md:grid-cols-2 md:px-8 md:py-32">
-          <div className="aura-frame rounded-sm" data-anim="clip" data-parallax="0.08">
+          <div className="aura-glow rounded-sm" data-anim="clip" data-parallax="0.08">
             <img
               src="/img/hero-02.jpg"
               alt="Composición floral blanca del atelier"

@@ -1,5 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { translateTexts } from "@/lib/translate.functions";
 
 export type Lang = "es" | "en";
 
@@ -7,22 +9,32 @@ const KEY = "fdp-lang-v1";
 
 type Dict = Record<string, { es: string; en: string }>;
 
-/** Diccionario de la interfaz. El contenido del catálogo vive en la base de datos. */
+/** Diccionario completo de la interfaz. El contenido del catálogo se traduce con IA. */
 const DICT: Dict = {
   "nav.home": { es: "Inicio", en: "Home" },
   "nav.catalog": { es: "Catálogo", en: "Catalog" },
   "nav.atelier": { es: "Atelier", en: "Atelier" },
   "nav.contact": { es: "Contacto", en: "Contact" },
   "nav.panel": { es: "Panel", en: "Admin" },
+  "nav.account": { es: "Mi cuenta", en: "My account" },
 
   "cta.cart": { es: "Abrir carrito", en: "Open cart" },
   "cta.menu": { es: "Menú", en: "Menu" },
+  "cta.close": { es: "Cerrar", en: "Close" },
   "cta.shopNow": { es: "Comprar ahora", en: "Shop now" },
   "cta.viewCatalog": { es: "Ver todo el catálogo", en: "View full catalog" },
   "cta.viewCollection": { es: "Ver colección", en: "View collection" },
   "cta.ourStory": { es: "Nuestra historia", en: "Our story" },
   "cta.whatsapp": { es: "Pedir por WhatsApp", en: "Order via WhatsApp" },
   "cta.skipIntro": { es: "Saltar intro", en: "Skip intro" },
+  "cta.save": { es: "Guardar", en: "Save" },
+  "cta.cancel": { es: "Cancelar", en: "Cancel" },
+  "cta.edit": { es: "Editar", en: "Edit" },
+  "cta.delete": { es: "Eliminar", en: "Delete" },
+  "cta.add": { es: "Añadir", en: "Add" },
+  "cta.upload": { es: "Subir desde galería", en: "Upload from gallery" },
+  "cta.sound": { es: "Sonido", en: "Sound" },
+  "cta.back": { es: "Volver", en: "Back" },
 
   "intro.location": { es: "Barranquilla · Atelier Floral", en: "Barranquilla · Floral Atelier" },
   "intro.tagline": {
@@ -53,7 +65,7 @@ const DICT: Dict = {
   },
 
   "home.collections.eyebrow": { es: "Colecciones", en: "Collections" },
-  "home.collections.title1": { es: "Cuatro maneras de", en: "Four ways to" },
+  "home.collections.title1": { es: "Tres maneras de", en: "Three ways to" },
   "home.collections.title2": { es: "decir algo", en: "say something" },
   "home.featured.eyebrow": { es: "Selección del atelier", en: "Atelier selection" },
   "home.featured.title1": { es: "Productos", en: "Featured" },
@@ -70,8 +82,88 @@ const DICT: Dict = {
     en: "The result is a gift object that looks — and is remembered — like a design piece.",
   },
 
+  "home.gallery.eyebrow": { es: "Próximamente", en: "Coming soon" },
+  "home.gallery.title1": { es: "Clientes", en: "Happy" },
+  "home.gallery.title2": { es: "felices", en: "clients" },
+  "home.gallery.copy": {
+    es: "Momentos reales entregados por el atelier, publicados por nuestro equipo.",
+    en: "Real moments delivered by the atelier, published by our team.",
+  },
+  "home.instagram.eyebrow": { es: "Instagram", en: "Instagram" },
+  "home.instagram.title1": { es: "Nuestro", en: "Our" },
+  "home.instagram.title2": { es: "feed", en: "feed" },
+  "home.instagram.copy": {
+    es: "Toca cualquier pieza para verla en Instagram.",
+    en: "Tap any piece to open it on Instagram.",
+  },
+
+  "catalog.eyebrow": { es: "Catálogo completo", en: "Full catalog" },
+  "catalog.title1": { es: "Todas las", en: "All our" },
+  "catalog.title2": { es: "creaciones", en: "creations" },
+  "catalog.all": { es: "Todas", en: "All" },
+  "catalog.search": { es: "Buscar", en: "Search" },
+  "catalog.sort.featured": { es: "Destacados", en: "Featured" },
+  "catalog.sort.priceAsc": { es: "Precio: menor a mayor", en: "Price: low to high" },
+  "catalog.sort.priceDesc": { es: "Precio: mayor a menor", en: "Price: high to low" },
+  "catalog.empty": {
+    es: "No encontramos piezas con esos filtros.",
+    en: "No pieces match those filters.",
+  },
+  "collection.empty": {
+    es: "Estamos preparando nuevas piezas para esta colección.",
+    en: "We are preparing new pieces for this collection.",
+  },
+
   "product.addToCart": { es: "Añadir al carrito", en: "Add to cart" },
   "product.sale": { es: "Oferta", en: "Sale" },
+  "product.stock": { es: "Disponibles", en: "In stock" },
+  "product.related": { es: "También te puede gustar", en: "You may also like" },
+  "product.notFound": { es: "Pieza no encontrada", en: "Piece not found" },
+
+  "cart.title": { es: "Tu carrito", en: "Your cart" },
+  "cart.empty": { es: "Tu carrito está vacío.", en: "Your cart is empty." },
+  "cart.subtotal": { es: "Subtotal", en: "Subtotal" },
+  "cart.shipping": { es: "Envío", en: "Shipping" },
+  "cart.total": { es: "Total", en: "Total" },
+  "cart.checkout": { es: "Finalizar pedido", en: "Checkout" },
+  "cart.freeShipping": { es: "Envío de cortesía", en: "Complimentary shipping" },
+
+  "checkout.title1": { es: "Datos de", en: "Delivery" },
+  "checkout.title2": { es: "entrega", en: "details" },
+  "checkout.customer": { es: "Quien ordena", en: "Who orders" },
+  "checkout.recipient": { es: "Quien recibe", en: "Who receives" },
+  "checkout.name": { es: "Nombre completo", en: "Full name" },
+  "checkout.phone": { es: "Teléfono", en: "Phone" },
+  "checkout.email": { es: "Correo", en: "Email" },
+  "checkout.address": { es: "Dirección", en: "Address" },
+  "checkout.city": { es: "Ciudad", en: "City" },
+  "checkout.date": { es: "Fecha de entrega", en: "Delivery date" },
+  "checkout.slot": { es: "Franja horaria", en: "Time slot" },
+  "checkout.dedication": { es: "Dedicatoria", en: "Card message" },
+  "checkout.notes": { es: "Notas", en: "Notes" },
+  "checkout.summary": { es: "Resumen", en: "Summary" },
+  "checkout.send": { es: "Enviar pedido por WhatsApp", en: "Send order via WhatsApp" },
+  "checkout.savedAddresses": { es: "Direcciones guardadas", en: "Saved addresses" },
+  "checkout.useAddress": { es: "Usar esta dirección", en: "Use this address" },
+
+  "auth.signIn": { es: "Iniciar sesión", en: "Sign in" },
+  "auth.signUp": { es: "Crear cuenta", en: "Create account" },
+  "auth.signOut": { es: "Cerrar sesión", en: "Sign out" },
+  "auth.password": { es: "Contraseña", en: "Password" },
+  "auth.email": { es: "Correo", en: "Email" },
+  "auth.haveAccount": { es: "¿Ya tienes cuenta?", en: "Already have an account?" },
+  "auth.noAccount": { es: "¿Aún no tienes cuenta?", en: "Don't have an account yet?" },
+
+  "account.title1": { es: "Mi", en: "My" },
+  "account.title2": { es: "cuenta", en: "account" },
+  "account.profile": { es: "Datos personales", en: "Personal details" },
+  "account.addresses": { es: "Mis direcciones", en: "My addresses" },
+  "account.orders": { es: "Historial de compras", en: "Order history" },
+  "account.noOrders": { es: "Aún no tienes pedidos.", en: "You have no orders yet." },
+  "account.default": { es: "Predeterminada", en: "Default" },
+  "account.setDefault": { es: "Usar por defecto", en: "Set as default" },
+  "account.label": { es: "Etiqueta (Casa, Oficina…)", en: "Label (Home, Office…)" },
+  "account.saved": { es: "Guardado", en: "Saved" },
 
   "footer.about": {
     es: "Atelier floral de alta gama en Barranquilla. Diseñamos composiciones a mano con flor importada y nacional de grado premium, y las entregamos el mismo día.",
@@ -80,6 +172,7 @@ const DICT: Dict = {
   "footer.collections": { es: "Colecciones", en: "Collections" },
   "footer.contact": { es: "Contacto", en: "Contact" },
   "footer.hours": { es: "Horario", en: "Opening hours" },
+  "footer.rights": { es: "Todos los derechos reservados.", en: "All rights reserved." },
 
   "contact.hours.weekdays": { es: "Lunes a sábado", en: "Monday to Saturday" },
   "contact.hours.sunday": { es: "Domingo", en: "Sunday" },
@@ -132,4 +225,39 @@ export function useI18n(): Ctx {
   const ctx = useContext(LangContext);
   if (!ctx) return { lang: "es", setLang: () => {}, t: (k) => DICT[k]?.es ?? k };
   return ctx;
+}
+
+/**
+ * Traduce con IA el contenido dinámico (nombres, descripciones, dedicatorias)
+ * que vive en la base de datos. En español devuelve el texto original.
+ */
+export function useContentTranslator(texts: (string | null | undefined)[]) {
+  const { lang } = useI18n();
+  const clean = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          texts
+            .filter((t): t is string => typeof t === "string" && t.trim().length > 0)
+            .map((t) => t.trim()),
+        ),
+      ).sort(),
+    [texts],
+  );
+
+  const { data } = useQuery({
+    queryKey: ["translate", lang, clean],
+    enabled: lang === "en" && clean.length > 0,
+    staleTime: 1000 * 60 * 60,
+    queryFn: () => translateTexts({ data: { texts: clean, target: "en" } }),
+  });
+
+  return useCallback(
+    (value: string | null | undefined) => {
+      if (!value) return "";
+      if (lang === "es") return value;
+      return data?.map?.[value.trim()] ?? value;
+    },
+    [lang, data],
+  );
 }

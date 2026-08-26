@@ -399,7 +399,7 @@
   pointer-events: none;
 }
 
-/* ---------- Marco de aura dorado / rosado ---------- */
+/* ---------- Aura dorada / rosada superpuesta (halo en movimiento) ---------- */
 
 @property --aura-angle {
   syntax: "<angle>";
@@ -413,62 +413,65 @@
   }
 }
 
-@utility aura-frame {
+@keyframes aura-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.62;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+}
+
+@utility aura-glow {
   position: relative;
   isolation: isolate;
 }
 
-.aura-frame::before {
+/* Halo giratorio difuso alrededor de la pieza — no es un borde */
+.aura-glow::before {
   content: "";
   position: absolute;
-  inset: -1.5px;
-  z-index: 0;
-  border-radius: inherit;
-  padding: 1.5px;
+  inset: -22px;
+  z-index: -1;
+  border-radius: 50% 45% 55% 50% / 50% 55% 45% 50%;
   background: conic-gradient(
     from var(--aura-angle, 0deg),
-    oklch(0.79 0.11 84 / 0.95),
-    oklch(0.68 0.19 8 / 0.9),
-    oklch(0.88 0.06 88 / 0.95),
-    oklch(0.72 0.17 350 / 0.85),
-    oklch(0.79 0.11 84 / 0.95)
+    oklch(0.72 0.17 12 / 0.55),
+    oklch(0.8 0.11 84 / 0.5),
+    oklch(0.75 0.15 350 / 0.42),
+    oklch(0.86 0.07 88 / 0.5),
+    oklch(0.72 0.17 12 / 0.55)
   );
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  mask-composite: exclude;
-  opacity: 0.85;
-  animation: aura-frame-spin 7s linear infinite;
+  filter: blur(26px);
+  opacity: 0.75;
+  animation: aura-frame-spin 9s linear infinite;
   transition: opacity 0.7s ease;
+  pointer-events: none;
 }
 
-.aura-frame:hover::before {
-  opacity: 1;
-}
-
-.aura-frame::after {
+/* Segundo velo que respira para dar profundidad al aura */
+.aura-glow::after {
   content: "";
   position: absolute;
-  inset: -26px;
-  z-index: -1;
+  inset: -34px;
+  z-index: -2;
   border-radius: 999px;
   background: radial-gradient(
     circle at 50% 55%,
-    oklch(0.68 0.2 6 / 0.45),
-    oklch(0.79 0.11 84 / 0.2) 45%,
-    transparent 70%
+    oklch(0.72 0.17 10 / 0.32),
+    oklch(0.8 0.11 84 / 0.18) 48%,
+    transparent 72%
   );
-  opacity: 0.4;
-  transition: opacity 0.8s ease;
-  filter: blur(18px);
-  animation: aura-pulse 5.5s ease-in-out infinite;
+  filter: blur(22px);
+  animation: aura-breathe 6s ease-in-out infinite;
+  pointer-events: none;
 }
 
-.aura-frame:hover::after {
+.aura-glow:hover::before,
+.aura-glow:hover::after {
   opacity: 1;
 }
 
@@ -528,8 +531,8 @@
     opacity: 1 !important;
     animation: none !important;
   }
-  .aura-frame::before,
-  .aura-frame::after,
+  .aura-glow::before,
+  .aura-glow::after,
   .shine:hover::after,
   .press:active {
     animation: none !important;
@@ -541,7 +544,7 @@
   .surface-glass {
     backdrop-filter: blur(10px) saturate(1.05);
   }
-  .aura-frame::after {
+  .aura-glow::before {
     filter: blur(14px);
   }
 }
