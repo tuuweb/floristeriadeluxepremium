@@ -4,9 +4,11 @@ import { ArrowUpRight, Clock, Flower2, Gem, Truck } from "lucide-react";
 import HeroSlider from "@/components/HeroSlider";
 import ProductCard from "@/components/ProductCard";
 import PetalCanvas from "@/components/PetalCanvas";
+import GallerySection from "@/components/GallerySection";
+import InstagramSection from "@/components/InstagramSection";
 import { categoriesQuery, productsQuery } from "@/lib/queries";
 import { useParallax, useReveal } from "@/hooks/use-reveal";
-import { useI18n } from "@/lib/i18n";
+import { useContentTranslator, useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
   head: () => ({
