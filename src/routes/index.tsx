@@ -46,6 +46,8 @@ function Home() {
   const { data: categories } = useQuery(categoriesQuery);
   const { data: products } = useQuery(productsQuery);
   const featured = (products ?? []).filter((p) => p.is_featured).slice(0, 6);
+  const collections = (categories ?? []).filter((c) => c.is_active).slice(0, 3);
+  const tc = useContentTranslator(collections.flatMap((c) => [c.name, c.description]));
 
   return (
     <>
@@ -86,8 +88,11 @@ function Home() {
             </h2>
           </div>
 
-          <div className="mt-14 grid gap-7 sm:grid-cols-2 lg:grid-cols-4" data-stagger="130">
-            {(categories ?? []).map((c) => (
+          <div
+            className="mt-12 grid grid-cols-2 gap-4 sm:gap-7 md:mt-14 lg:grid-cols-3"
+            data-stagger="130"
+          >
+            {collections.map((c) => (
               <Link
                 key={c.id}
                 to="/coleccion/$slug"
