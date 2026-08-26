@@ -30,7 +30,7 @@ export default function ProductCard({ product, index = 0 }: { product: Product; 
       <Link
         to="/producto/$slug"
         params={{ slug: product.slug }}
-        className="aura-frame press block overflow-hidden rounded-sm bg-secondary"
+        className="aura-glow press block overflow-hidden rounded-sm bg-secondary"
       >
         <div className="relative z-1 aspect-4/5 overflow-hidden rounded-sm">
           <img

@@ -109,7 +109,7 @@ function Contact() {
           </ul>
         </div>
 
-        <div className="surface-glass aura-frame rounded-sm p-8" data-anim="right">
+        <div className="surface-glass aura-glow rounded-sm p-8" data-anim="right">
           <p className="eyebrow">Pedido a medida</p>
           <textarea
             value={message}
@@ -129,7 +129,7 @@ function Contact() {
       </div>
 
       <div className="mx-auto mt-20 max-w-7xl px-5 md:px-8">
-        <div className="aura-frame overflow-hidden rounded-sm" data-anim="clip">
+        <div className="aura-glow overflow-hidden rounded-sm" data-anim="clip">
           <iframe
             title="Mapa Floristería Deluxe Premium"
             src="https://www.google.com/maps?q=Carrera%2043%20%2379-226%20Barranquilla%20Colombia&output=embed"

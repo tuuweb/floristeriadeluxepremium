@@ -544,7 +544,7 @@
   .surface-glass {
     backdrop-filter: blur(10px) saturate(1.05);
   }
-  .aura-frame::after {
+  .aura-glow::before {
     filter: blur(14px);
   }
 }

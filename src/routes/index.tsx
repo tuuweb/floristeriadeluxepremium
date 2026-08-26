@@ -91,7 +91,7 @@ function Home() {
                 to="/coleccion/$slug"
                 params={{ slug: c.slug }}
                 data-anim="tilt"
-                className="aura-frame press group relative block rounded-sm"
+                className="aura-glow press group relative block rounded-sm"
               >
                 <span className="relative z-1 block overflow-hidden rounded-sm">
                   <img
@@ -156,7 +156,7 @@ function Home() {
       {/* Editorial */}
       <section className="relative overflow-hidden border-t border-border">
         <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 py-24 md:grid-cols-2 md:px-8 md:py-32">
-          <div className="aura-frame rounded-sm" data-anim="clip" data-parallax="0.08">
+          <div className="aura-glow rounded-sm" data-anim="clip" data-parallax="0.08">
             <img
               src="/img/hero-02.jpg"
               alt="Composición floral blanca del atelier"
