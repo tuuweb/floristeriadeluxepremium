@@ -531,8 +531,8 @@
     opacity: 1 !important;
     animation: none !important;
   }
-  .aura-frame::before,
-  .aura-frame::after,
+  .aura-glow::before,
+  .aura-glow::after,
   .shine:hover::after,
   .press:active {
     animation: none !important;
