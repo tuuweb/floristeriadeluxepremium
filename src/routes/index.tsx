@@ -109,13 +109,13 @@ function Home() {
                     height={1200}
                     className="aspect-3/4 w-full object-cover transition-transform duration-1200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110"
                   />
-                  <span className="absolute inset-0 bg-gradient-to-t from-background via-background/25 to-transparent" />
-                  <span className="absolute inset-x-0 bottom-0 p-6">
-                    <span className="font-display text-2xl text-cream">{c.name}</span>
-                    <span className="mt-2 block text-xs leading-relaxed text-muted-foreground">
-                      {c.description}
+                  <span className="absolute inset-0 bg-gradient-to-t from-background via-background/35 to-transparent" />
+                  <span className="absolute inset-x-0 bottom-0 p-4 sm:p-6">
+                    <span className="font-display text-lg text-cream sm:text-2xl">{tc(c.name)}</span>
+                    <span className="mt-1.5 line-clamp-3 block text-[11px] leading-relaxed text-muted-foreground sm:text-xs">
+                      {tc(c.description)}
                     </span>
-                    <span className="mt-4 inline-flex items-center gap-2 text-[10px] tracking-[0.26em] text-primary uppercase transition-transform duration-500 group-hover:translate-x-1">
+                    <span className="mt-3 inline-flex items-center gap-2 text-[9px] tracking-[0.24em] text-primary uppercase transition-transform duration-500 group-hover:translate-x-1 sm:mt-4 sm:text-[10px]">
                       {t("cta.viewCollection")} <ArrowUpRight className="h-3 w-3" />
                     </span>
                   </span>
@@ -150,7 +150,7 @@ function Home() {
           </div>
 
           <div
-            className="mt-14 grid gap-x-7 gap-y-14 sm:grid-cols-2 lg:grid-cols-3"
+            className="mt-12 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-7 sm:gap-y-14 md:mt-14 lg:grid-cols-3"
             data-stagger="120"
           >
             {featured.map((p, i) => (
@@ -215,6 +215,9 @@ function Home() {
           </div>
         </div>
       </section>
+
+      <GallerySection />
+      <InstagramSection />
     </>
   );
 }
