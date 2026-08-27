@@ -215,6 +215,9 @@ function Home() {
           </div>
         </div>
       </section>
+
+      <GallerySection />
+      <InstagramSection />
     </>
   );
 }
