@@ -14,6 +14,28 @@ export default function CinematicIntro() {
   const { t } = useI18n();
   const [stage, setStage] = useState(0); // 0 negro, 1 pétalos, 2 logo, 3 marca, 4 foto, 5 salida
   const [mounted, setMounted] = useState(false);
+  const [muted, setMuted] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Intenta reproducir el audio de la intro; si el navegador lo bloquea,
+  // el primer toque en la pantalla lo activa.
+  useEffect(() => {
+    if (!mounted) return undefined;
+    const el = audioRef.current;
+    if (!el) return undefined;
+    el.volume = 0.55;
+    const play = () => {
+      void el.play().catch(() => {
+        /* el navegador exige interacción */
+      });
+    };
+    play();
+    window.addEventListener("pointerdown", play, { once: true });
+    return () => {
+      window.removeEventListener("pointerdown", play);
+      el.pause();
+    };
+  }, [mounted]);
 
   useEffect(() => {
     let skip = false;
