@@ -2,17 +2,22 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Loader2, LogOut, Plus, Trash2 } from "lucide-react";
+import { Loader2, LogOut, Pencil, Plus, Trash2, X } from "lucide-react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import {
   categoriesQuery,
+  galleryQuery,
+  instagramQuery,
   ordersQuery,
   productsQuery,
   settingsQuery,
   type Category,
+  type GalleryPhoto,
+  type InstagramPost,
   type Product,
 } from "@/lib/queries";
+import ImageField from "@/components/ImageField";
 import { formatMoney, slugify } from "@/lib/format";
 
 export const Route = createFileRoute("/admin")({
@@ -28,7 +33,7 @@ export const Route = createFileRoute("/admin")({
   component: Admin,
 });
 
-type Tab = "pedidos" | "productos" | "categorias" | "config";
+type Tab = "pedidos" | "productos" | "categorias" | "galeria" | "instagram" | "config";
 
 function Admin() {
   const [session, setSession] = useState<Session | null>(null);
@@ -99,6 +104,8 @@ function Admin() {
     { key: "pedidos", label: "Pedidos" },
     { key: "productos", label: "Productos" },
     { key: "categorias", label: "Categorías" },
+    { key: "galeria", label: "Galería" },
+    { key: "instagram", label: "Instagram" },
     { key: "config", label: "TRM y ajustes" },
   ];
 
@@ -138,6 +145,8 @@ function Admin() {
           {tab === "pedidos" && <OrdersPanel />}
           {tab === "productos" && <ProductsPanel />}
           {tab === "categorias" && <CategoriesPanel />}
+          {tab === "galeria" && <GalleryPanel />}
+          {tab === "instagram" && <InstagramPanel />}
           {tab === "config" && <SettingsPanel />}
         </div>
       </div>
@@ -284,6 +293,7 @@ function ProductsPanel() {
   const qc = useQueryClient();
   const { data: products } = useQuery(productsQuery);
   const { data: categories } = useQuery(categoriesQuery);
+  const [editing, setEditing] = useState<Product | null>(null);
   const [draft, setDraft] = useState({
     name: "",
     price_cop: "",
@@ -353,12 +363,13 @@ function ProductsPanel() {
               </option>
             ))}
           </select>
-          <input
-            className={field}
-            placeholder="URL de imagen"
-            value={draft.image}
-            onChange={(e) => setDraft({ ...draft, image: e.target.value })}
-          />
+          <div className="md:col-span-2">
+            <ImageField
+              value={draft.image}
+              onChange={(url) => setDraft({ ...draft, image: url })}
+              folder="productos"
+            />
+          </div>
           <textarea
             className={`${field} md:col-span-2`}
             placeholder="Descripción"
@@ -413,10 +424,381 @@ function ProductsPanel() {
               Activo
             </label>
             <button
+              onClick={() => setEditing(p)}
+              aria-label="Editar producto"
+              className="text-muted-foreground hover:text-primary"
+            >
+              <Pencil className="h-4 w-4" />
+            </button>
+            <button
               onClick={() => destroy(p.id)}
               aria-label="Eliminar producto"
               className="text-muted-foreground hover:text-accent"
             >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {editing ? (
+        <ProductEditor
+          product={editing}
+          categories={categories ?? []}
+          onClose={() => setEditing(null)}
+          onSaved={() => {
+            setEditing(null);
+            refresh();
+          }}
+        />
+      ) : null}
+    </div>
+  );
+}
+
+function ProductEditor({
+  product,
+  categories,
+  onClose,
+  onSaved,
+}: {
+  product: Product;
+  categories: Category[];
+  onClose: () => void;
+  onSaved: () => void;
+}) {
+  const [form, setForm] = useState({
+    name: product.name,
+    description: product.description ?? "",
+    price_cop: String(product.price_cop ?? ""),
+    compare_price_cop: product.compare_price_cop ? String(product.compare_price_cop) : "",
+    category_id: product.category_id ?? "",
+    stock: String(product.stock ?? 0),
+    images: product.images?.length ? product.images : [""],
+    is_featured: product.is_featured,
+    is_active: product.is_active,
+  });
+  const [busy, setBusy] = useState(false);
+
+  const setImage = (i: number, url: string) => {
+    const next = [...form.images];
+    next[i] = url;
+    setForm({ ...form, images: next });
+  };
+
+  const save = async () => {
+    setBusy(true);
+    const { error } = await supabase
+      .from("products")
+      .update({
+        name: form.name,
+        slug: slugify(form.name),
+        description: form.description,
+        price_cop: Number(form.price_cop || 0),
+        compare_price_cop: form.compare_price_cop ? Number(form.compare_price_cop) : null,
+        category_id: form.category_id || null,
+        stock: Number(form.stock || 0),
+        images: form.images.filter(Boolean),
+        is_featured: form.is_featured,
+        is_active: form.is_active,
+      })
+      .eq("id", product.id);
+    setBusy(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Producto actualizado");
+    onSaved();
+  };
+
+  return (
+    <div className="fixed inset-0 z-90 flex items-start justify-center overflow-y-auto bg-foreground/40 p-4 backdrop-blur-sm">
+      <div className="surface-glass my-10 w-full max-w-2xl rounded-sm p-6 md:p-8">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="eyebrow">Editar</p>
+            <h2 className="mt-2 font-display text-2xl">{product.name}</h2>
+          </div>
+          <button onClick={onClose} aria-label="Cerrar" className="press text-muted-foreground">
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <div className="mt-6 grid gap-4 md:grid-cols-2">
+          <input
+            className={field}
+            placeholder="Nombre"
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+          />
+          <select
+            className={`${field} bg-card`}
+            value={form.category_id}
+            onChange={(e) => setForm({ ...form, category_id: e.target.value })}
+          >
+            <option value="">Sin colección</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+          <input
+            className={field}
+            type="number"
+            placeholder="Precio COP"
+            value={form.price_cop}
+            onChange={(e) => setForm({ ...form, price_cop: e.target.value })}
+          />
+          <input
+            className={field}
+            type="number"
+            placeholder="Precio antes (opcional)"
+            value={form.compare_price_cop}
+            onChange={(e) => setForm({ ...form, compare_price_cop: e.target.value })}
+          />
+          <input
+            className={field}
+            type="number"
+            placeholder="Stock"
+            value={form.stock}
+            onChange={(e) => setForm({ ...form, stock: e.target.value })}
+          />
+          <textarea
+            className={`${field} md:col-span-2`}
+            rows={4}
+            placeholder="Descripción"
+            value={form.description}
+            onChange={(e) => setForm({ ...form, description: e.target.value })}
+          />
+          <div className="space-y-3 md:col-span-2">
+            {form.images.map((img, i) => (
+              <ImageField
+                key={i}
+                value={img}
+                folder="productos"
+                label={`Imagen ${i + 1}`}
+                onChange={(url) => setImage(i, url)}
+              />
+            ))}
+            <button
+              type="button"
+              onClick={() => setForm({ ...form, images: [...form.images, ""] })}
+              className="press inline-flex items-center gap-2 border border-border px-4 py-2.5 text-[10px] tracking-[0.22em] uppercase hover:border-primary"
+            >
+              <Plus className="h-3 w-3" /> Añadir imagen
+            </button>
+          </div>
+          <label className="flex items-center gap-2 text-xs text-muted-foreground">
+            <input
+              type="checkbox"
+              checked={form.is_featured}
+              onChange={(e) => setForm({ ...form, is_featured: e.target.checked })}
+            />
+            Destacado
+          </label>
+          <label className="flex items-center gap-2 text-xs text-muted-foreground">
+            <input
+              type="checkbox"
+              checked={form.is_active}
+              onChange={(e) => setForm({ ...form, is_active: e.target.checked })}
+            />
+            Activo
+          </label>
+        </div>
+
+        <div className="mt-7 flex flex-wrap gap-3">
+          <button
+            onClick={save}
+            disabled={busy}
+            className="press bg-primary px-7 py-3.5 text-[11px] tracking-[0.24em] text-primary-foreground uppercase disabled:opacity-50"
+          >
+            {busy ? "Guardando…" : "Guardar cambios"}
+          </button>
+          <button
+            onClick={onClose}
+            className="press border border-border px-7 py-3.5 text-[11px] tracking-[0.24em] uppercase"
+          >
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function GalleryPanel() {
+  const qc = useQueryClient();
+  const { data: photos } = useQuery(galleryQuery);
+  const [draft, setDraft] = useState({ image_url: "", caption: "", customer_name: "" });
+
+  const refresh = () => qc.invalidateQueries({ queryKey: galleryQuery.queryKey });
+
+  const create = async () => {
+    if (!draft.image_url) {
+      toast.error("Sube o indica una imagen");
+      return;
+    }
+    const { error } = await supabase.from("gallery_photos").insert(draft);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Foto publicada");
+    setDraft({ image_url: "", caption: "", customer_name: "" });
+    refresh();
+  };
+
+  const patch = async (id: string, values: Partial<GalleryPhoto>) => {
+    const { error } = await supabase.from("gallery_photos").update(values).eq("id", id);
+    if (error) { toast.error(error.message); return; }
+    refresh();
+  };
+
+  const destroy = async (id: string) => {
+    const { error } = await supabase.from("gallery_photos").delete().eq("id", id);
+    if (error) { toast.error(error.message); return; }
+    refresh();
+  };
+
+  return (
+    <div>
+      <div className="space-y-4 border border-border p-6">
+        <p className="eyebrow">Nueva foto de cliente</p>
+        <ImageField
+          value={draft.image_url}
+          folder="galeria"
+          onChange={(url) => setDraft({ ...draft, image_url: url })}
+        />
+        <div className="grid gap-4 md:grid-cols-2">
+          <input
+            className={field}
+            placeholder="Nombre del cliente"
+            value={draft.customer_name}
+            onChange={(e) => setDraft({ ...draft, customer_name: e.target.value })}
+          />
+          <input
+            className={field}
+            placeholder="Mensaje o descripción"
+            value={draft.caption}
+            onChange={(e) => setDraft({ ...draft, caption: e.target.value })}
+          />
+        </div>
+        <button
+          onClick={create}
+          className="press inline-flex items-center gap-2 bg-primary px-7 py-3.5 text-[11px] tracking-[0.24em] text-primary-foreground uppercase"
+        >
+          <Plus className="h-3.5 w-3.5" /> Publicar
+        </button>
+        <p className="text-xs text-muted-foreground">
+          La sección se muestra en el sitio solo si activas “Galería visible” en TRM y ajustes.
+        </p>
+      </div>
+
+      <div className="mt-8 grid gap-3 sm:grid-cols-2">
+        {(photos ?? []).map((g) => (
+          <div key={g.id} className="flex items-center gap-4 border border-border p-4">
+            <img src={g.image_url} alt="" loading="lazy" className="h-16 w-14 rounded-sm object-cover" />
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm">{g.customer_name || "Cliente"}</p>
+              <p className="truncate text-xs text-muted-foreground">{g.caption}</p>
+            </div>
+            <label className="flex shrink-0 items-center gap-2 text-xs text-muted-foreground">
+              <input
+                type="checkbox"
+                checked={g.is_active}
+                onChange={(e) => patch(g.id, { is_active: e.target.checked })}
+              />
+              Visible
+            </label>
+            <button onClick={() => destroy(g.id)} aria-label="Eliminar" className="text-muted-foreground hover:text-accent">
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function InstagramPanel() {
+  const qc = useQueryClient();
+  const { data: posts } = useQuery(instagramQuery);
+  const [draft, setDraft] = useState({ post_url: "", image_url: "", caption: "" });
+
+  const refresh = () => qc.invalidateQueries({ queryKey: instagramQuery.queryKey });
+
+  const create = async () => {
+    if (!draft.post_url) {
+      toast.error("Indica el enlace del reel o publicación");
+      return;
+    }
+    const { error } = await supabase.from("instagram_posts").insert(draft);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Publicación añadida");
+    setDraft({ post_url: "", image_url: "", caption: "" });
+    refresh();
+  };
+
+  const patch = async (id: string, values: Partial<InstagramPost>) => {
+    const { error } = await supabase.from("instagram_posts").update(values).eq("id", id);
+    if (error) { toast.error(error.message); return; }
+    refresh();
+  };
+
+  const destroy = async (id: string) => {
+    const { error } = await supabase.from("instagram_posts").delete().eq("id", id);
+    if (error) { toast.error(error.message); return; }
+    refresh();
+  };
+
+  return (
+    <div>
+      <div className="space-y-4 border border-border p-6">
+        <p className="eyebrow">Nuevo reel o publicación</p>
+        <input
+          className={field}
+          placeholder="https://www.instagram.com/reel/…"
+          value={draft.post_url}
+          onChange={(e) => setDraft({ ...draft, post_url: e.target.value })}
+        />
+        <ImageField
+          value={draft.image_url}
+          folder="instagram"
+          label="Portada"
+          onChange={(url) => setDraft({ ...draft, image_url: url })}
+        />
+        <input
+          className={field}
+          placeholder="Texto breve"
+          value={draft.caption}
+          onChange={(e) => setDraft({ ...draft, caption: e.target.value })}
+        />
+        <button
+          onClick={create}
+          className="press inline-flex items-center gap-2 bg-primary px-7 py-3.5 text-[11px] tracking-[0.24em] text-primary-foreground uppercase"
+        >
+          <Plus className="h-3.5 w-3.5" /> Añadir
+        </button>
+      </div>
+
+      <div className="mt-8 grid gap-3 sm:grid-cols-2">
+        {(posts ?? []).map((ig) => (
+          <div key={ig.id} className="flex items-center gap-4 border border-border p-4">
+            {ig.image_url ? (
+              <img src={ig.image_url} alt="" loading="lazy" className="h-16 w-14 rounded-sm object-cover" />
+            ) : null}
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-xs text-muted-foreground">{ig.post_url}</p>
+              <p className="truncate text-sm">{ig.caption}</p>
+            </div>
+            <label className="flex shrink-0 items-center gap-2 text-xs text-muted-foreground">
+              <input
+                type="checkbox"
+                checked={ig.is_active}
+                onChange={(e) => patch(ig.id, { is_active: e.target.checked })}
+              />
+              Visible
+            </label>
+            <button onClick={() => destroy(ig.id)} aria-label="Eliminar" className="text-muted-foreground hover:text-accent">
               <Trash2 className="h-4 w-4" />
             </button>
           </div>
@@ -466,12 +848,9 @@ function CategoriesPanel() {
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        <input
-          className={`${field} max-w-xs`}
-          placeholder="URL de imagen"
-          value={image}
-          onChange={(e) => setImage(e.target.value)}
-        />
+        <div className="w-full max-w-md">
+          <ImageField value={image} folder="colecciones" onChange={setImage} />
+        </div>
         <button
           onClick={create}
           className="bg-primary px-7 py-3.5 text-[11px] tracking-[0.24em] text-primary-foreground uppercase"
@@ -531,6 +910,18 @@ const SETTING_LABELS: Record<string, string> = {
   shipping_cop: "Costo de envío (COP)",
   free_shipping_from_cop: "Envío gratis desde (COP)",
   instagram: "Instagram (URL)",
+  instagram_handle: "Instagram (usuario)",
+  maps_url: "Google Maps (URL)",
+  city: "Ciudad",
+  hours_weekdays: "Horario lunes a sábado",
+  hours_sunday: "Horario domingo",
+  hours_whatsapp: "Pedidos por WhatsApp",
+};
+
+const TOGGLE_LABELS: Record<string, string> = {
+  gallery_enabled: "Galería de clientes visible",
+  instagram_enabled: "Sección de Instagram visible",
+  intro_audio_enabled: "Audio en la intro",
 };
 
 function SettingsPanel() {
@@ -565,6 +956,21 @@ function SettingsPanel() {
           </label>
         ))}
       </div>
+
+      <div className="mt-8 space-y-3 border-t border-border pt-6">
+        <p className="eyebrow">Secciones</p>
+        {Object.keys(TOGGLE_LABELS).map((key) => (
+          <label key={key} className="flex items-center gap-3 text-sm">
+            <input
+              type="checkbox"
+              checked={value(key) === "true"}
+              onChange={(e) => setDraft({ ...draft, [key]: e.target.checked ? "true" : "false" })}
+            />
+            {TOGGLE_LABELS[key]}
+          </label>
+        ))}
+      </div>
+
       <button
         onClick={save}
         className="mt-6 bg-primary px-7 py-3.5 text-[11px] tracking-[0.24em] text-primary-foreground uppercase"
