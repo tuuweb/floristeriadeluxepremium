@@ -113,7 +113,7 @@ function Catalog() {
             No encontramos piezas con esos filtros.
           </p>
         ) : (
-          <div className="mt-14 grid gap-x-7 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-14 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-7 sm:gap-y-14 lg:grid-cols-3">
             {filtered.map((p, i) => (
               <ProductCard key={p.id} product={p} index={i} />
             ))}

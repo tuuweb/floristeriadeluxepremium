@@ -67,7 +67,7 @@ function Collection() {
             Estamos preparando nuevas piezas para esta colección.
           </p>
         ) : (
-          <div className="grid gap-x-7 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-7 sm:gap-y-14 lg:grid-cols-3">
             {list.map((p, i) => (
               <ProductCard key={p.id} product={p} index={i} />
             ))}

@@ -153,7 +153,7 @@ function ProductDetail() {
       {related.length > 0 && (
         <section className="mx-auto mt-28 max-w-7xl px-5 md:px-8">
           <p className="eyebrow">También podría gustarte</p>
-          <div className="mt-10 grid gap-x-7 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-10 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-7 sm:gap-y-14 lg:grid-cols-3">
             {related.map((p, i) => (
               <ProductCard key={p.id} product={p} index={i} />
             ))}
