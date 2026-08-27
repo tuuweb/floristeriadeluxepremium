@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Volume2, VolumeX } from "lucide-react";
 import PetalCanvas from "./PetalCanvas";
 import { useI18n } from "@/lib/i18n";
+import introAudio from "@/assets/intro-deluxe.mp3.asset.json";
 
 const SEEN_KEY = "fdp-intro-seen";
 
