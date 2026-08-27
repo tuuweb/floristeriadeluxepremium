@@ -6,11 +6,12 @@ import type { Product } from "@/lib/queries";
 import { settingsQuery } from "@/lib/queries";
 import { formatMoney } from "@/lib/format";
 import { useStore } from "@/lib/store";
-import { useI18n } from "@/lib/i18n";
+import { useContentTranslator, useI18n } from "@/lib/i18n";
 
 export default function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
   const { add, currency } = useStore();
   const { t } = useI18n();
+  const tc = useContentTranslator([product.name]);
   const { data: settings } = useQuery(settingsQuery);
   const trm = Number(settings?.["trm_cop_usd"] ?? 3950);
   const [added, setAdded] = useState(false);
