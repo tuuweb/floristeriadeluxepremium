@@ -157,6 +157,17 @@ export default function CinematicIntro() {
         </p>
       </div>
 
+      <audio ref={audioRef} src={introAudio.url} preload="auto" muted={muted} />
+
+      <button
+        onClick={() => setMuted((m) => !m)}
+        aria-label={t("cta.sound")}
+        className="press absolute bottom-6 left-6 inline-flex items-center gap-2 text-[10px] tracking-[0.3em] text-muted-foreground uppercase transition-colors hover:text-primary"
+      >
+        {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+        {t("cta.sound")}
+      </button>
+
       <button
         onClick={close}
         className="press absolute right-6 bottom-6 text-[10px] tracking-[0.3em] text-muted-foreground uppercase transition-colors hover:text-primary"
