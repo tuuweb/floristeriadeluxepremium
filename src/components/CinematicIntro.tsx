@@ -89,7 +89,7 @@ export default function CinematicIntro() {
 
   return (
     <div
-      className={`fixed inset-0 z-100 overflow-hidden bg-background transition-opacity duration-800 ${
+      className={`fixed inset-0 z-100 overflow-hidden bg-[oklch(0.15_0.012_330)] transition-opacity duration-800 ${
         stage >= 5 ? "pointer-events-none opacity-0" : "opacity-100"
       }`}
     >
@@ -104,7 +104,7 @@ export default function CinematicIntro() {
           backgroundPosition: "center",
         }}
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-background/85 via-background/60 to-background" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[oklch(0.15_0.012_330/0.88)] via-[oklch(0.15_0.012_330/0.62)] to-[oklch(0.15_0.012_330)]" />
       <div className="diffused-light absolute inset-0" />
 
       {stage >= 1 && <PetalCanvas density={44} speed={1.35} burst />}
@@ -149,7 +149,7 @@ export default function CinematicIntro() {
           }`}
         />
         <p
-          className={`mt-6 max-w-md text-sm font-light text-muted-foreground transition-all duration-1200 ${
+          className={`mt-6 max-w-md text-sm font-light text-[oklch(0.86_0.02_80)] transition-all duration-1200 ${
             stage >= 4 ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
           }`}
         >
@@ -162,7 +162,7 @@ export default function CinematicIntro() {
       <button
         onClick={() => setMuted((m) => !m)}
         aria-label={t("cta.sound")}
-        className="press absolute bottom-6 left-6 inline-flex items-center gap-2 text-[10px] tracking-[0.3em] text-muted-foreground uppercase transition-colors hover:text-primary"
+        className="press absolute bottom-6 left-6 inline-flex items-center gap-2 text-[10px] tracking-[0.3em] text-[oklch(0.78_0.02_80)] uppercase transition-colors hover:text-primary"
       >
         {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
         {t("cta.sound")}
@@ -170,7 +170,7 @@ export default function CinematicIntro() {
 
       <button
         onClick={close}
-        className="press absolute right-6 bottom-6 text-[10px] tracking-[0.3em] text-muted-foreground uppercase transition-colors hover:text-primary"
+        className="press absolute right-6 bottom-6 text-[10px] tracking-[0.3em] text-[oklch(0.78_0.02_80)] uppercase transition-colors hover:text-primary"
       >
         {t("cta.skipIntro")}
       </button>
