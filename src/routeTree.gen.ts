@@ -14,6 +14,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as CatalogoRouteImport } from './routes/catalogo'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ContactoRouteImport } from './routes/contacto'
+import { Route as CuentaRouteImport } from './routes/cuenta'
 import { Route as NosotrosRouteImport } from './routes/nosotros'
 import { Route as ColeccionSlugRouteImport } from './routes/coleccion.$slug'
 import { Route as ProductoSlugRouteImport } from './routes/producto.$slug'
@@ -43,6 +44,11 @@ const ContactoRoute = ContactoRouteImport.update({
   path: '/contacto',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CuentaRoute = CuentaRouteImport.update({
+  id: '/cuenta',
+  path: '/cuenta',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NosotrosRoute = NosotrosRouteImport.update({
   id: '/nosotros',
   path: '/nosotros',
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/catalogo': typeof CatalogoRoute
   '/checkout': typeof CheckoutRoute
   '/contacto': typeof ContactoRoute
+  '/cuenta': typeof CuentaRoute
   '/nosotros': typeof NosotrosRoute
   '/coleccion/$slug': typeof ColeccionSlugRoute
   '/producto/$slug': typeof ProductoSlugRoute
@@ -75,6 +82,7 @@ export interface FileRoutesByTo {
   '/catalogo': typeof CatalogoRoute
   '/checkout': typeof CheckoutRoute
   '/contacto': typeof ContactoRoute
+  '/cuenta': typeof CuentaRoute
   '/nosotros': typeof NosotrosRoute
   '/coleccion/$slug': typeof ColeccionSlugRoute
   '/producto/$slug': typeof ProductoSlugRoute
@@ -86,6 +94,7 @@ export interface FileRoutesById {
   '/catalogo': typeof CatalogoRoute
   '/checkout': typeof CheckoutRoute
   '/contacto': typeof ContactoRoute
+  '/cuenta': typeof CuentaRoute
   '/nosotros': typeof NosotrosRoute
   '/coleccion/$slug': typeof ColeccionSlugRoute
   '/producto/$slug': typeof ProductoSlugRoute
@@ -98,6 +107,7 @@ export interface FileRouteTypes {
     | '/catalogo'
     | '/checkout'
     | '/contacto'
+    | '/cuenta'
     | '/nosotros'
     | '/coleccion/$slug'
     | '/producto/$slug'
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/catalogo'
     | '/checkout'
     | '/contacto'
+    | '/cuenta'
     | '/nosotros'
     | '/coleccion/$slug'
     | '/producto/$slug'
@@ -118,6 +129,7 @@ export interface FileRouteTypes {
     | '/catalogo'
     | '/checkout'
     | '/contacto'
+    | '/cuenta'
     | '/nosotros'
     | '/coleccion/$slug'
     | '/producto/$slug'
@@ -129,6 +141,7 @@ export interface RootRouteChildren {
   CatalogoRoute: typeof CatalogoRoute
   CheckoutRoute: typeof CheckoutRoute
   ContactoRoute: typeof ContactoRoute
+  CuentaRoute: typeof CuentaRoute
   NosotrosRoute: typeof NosotrosRoute
   ColeccionSlugRoute: typeof ColeccionSlugRoute
   ProductoSlugRoute: typeof ProductoSlugRoute
@@ -171,6 +184,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cuenta': {
+      id: '/cuenta'
+      path: '/cuenta'
+      fullPath: '/cuenta'
+      preLoaderRoute: typeof CuentaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/nosotros': {
       id: '/nosotros'
       path: '/nosotros'
@@ -201,6 +221,7 @@ const rootRouteChildren: RootRouteChildren = {
   CatalogoRoute: CatalogoRoute,
   CheckoutRoute: CheckoutRoute,
   ContactoRoute: ContactoRoute,
+  CuentaRoute: CuentaRoute,
   NosotrosRoute: NosotrosRoute,
   ColeccionSlugRoute: ColeccionSlugRoute,
   ProductoSlugRoute: ProductoSlugRoute,
