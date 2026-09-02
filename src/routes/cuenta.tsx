@@ -299,7 +299,10 @@ function AddressesCard({ session }: { session: Session }) {
   const save = async () => {
     if (!draft?.address) return;
     const { error } = await supabase.from("customer_addresses").insert({ user_id: uid, ...draft });
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     setDraft(null);
     toast.success(t("account.saved"));
     refresh();
