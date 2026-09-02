@@ -79,8 +79,8 @@ export type CustomerAddress = {
 export type GalleryPhoto = {
   id: string;
   image_url: string;
-  caption: string | null;
-  customer_name: string | null;
+  caption: string;
+  customer_name: string;
   sort_order: number;
   is_active: boolean;
 };
@@ -89,7 +89,7 @@ export type InstagramPost = {
   id: string;
   post_url: string;
   image_url: string;
-  caption: string | null;
+  caption: string;
   sort_order: number;
   is_active: boolean;
 };

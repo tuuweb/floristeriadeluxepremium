@@ -144,7 +144,22 @@ const DICT: Dict = {
   "checkout.summary": { es: "Resumen", en: "Summary" },
   "checkout.send": { es: "Enviar pedido por WhatsApp", en: "Send order via WhatsApp" },
   "checkout.savedAddresses": { es: "Direcciones guardadas", en: "Saved addresses" },
-  "checkout.useAddress": { es: "Usar esta dirección", en: "Use this address" },
+  "checkout.required": {
+    es: "Completa nombre, teléfono y dirección de entrega.",
+    en: "Please fill in name, phone and delivery address.",
+  },
+  "checkout.error": {
+    es: "No pudimos registrar el pedido. Intenta de nuevo.",
+    en: "We couldn't register the order. Please try again.",
+  },
+  "checkout.success": {
+    es: "Pedido {{order}} registrado. Te llevamos a WhatsApp.",
+    en: "Order {{order}} registered. Opening WhatsApp.",
+  },
+  "checkout.paymentNote": {
+    es: "Coordinamos el pago (transferencia o link seguro) directamente por WhatsApp.",
+    en: "We coordinate payment (transfer or secure link) directly via WhatsApp.",
+  },
 
   "auth.signIn": { es: "Iniciar sesión", en: "Sign in" },
   "auth.signUp": { es: "Crear cuenta", en: "Create account" },
@@ -163,7 +178,12 @@ const DICT: Dict = {
   "account.default": { es: "Predeterminada", en: "Default" },
   "account.setDefault": { es: "Usar por defecto", en: "Set as default" },
   "account.label": { es: "Etiqueta (Casa, Oficina…)", en: "Label (Home, Office…)" },
+  "account.addAddress": { es: "Añadir dirección", en: "Add address" },
+  "account.newAddress": { es: "Nueva dirección", en: "New address" },
+  "account.recipient": { es: "Quien recibe", en: "Recipient" },
   "account.saved": { es: "Guardado", en: "Saved" },
+  "account.delete": { es: "Eliminar", en: "Delete" },
+  "account.cancel": { es: "Cancelar", en: "Cancel" },
 
   "footer.about": {
     es: "Atelier floral de alta gama en Barranquilla. Diseñamos composiciones a mano con flor importada y nacional de grado premium, y las entregamos el mismo día.",
