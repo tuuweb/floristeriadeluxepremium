@@ -178,7 +178,12 @@ const DICT: Dict = {
   "account.default": { es: "Predeterminada", en: "Default" },
   "account.setDefault": { es: "Usar por defecto", en: "Set as default" },
   "account.label": { es: "Etiqueta (Casa, Oficina…)", en: "Label (Home, Office…)" },
+  "account.addAddress": { es: "Añadir dirección", en: "Add address" },
+  "account.newAddress": { es: "Nueva dirección", en: "New address" },
+  "account.recipient": { es: "Quien recibe", en: "Recipient" },
   "account.saved": { es: "Guardado", en: "Saved" },
+  "account.delete": { es: "Eliminar", en: "Delete" },
+  "account.cancel": { es: "Cancelar", en: "Cancel" },
 
   "footer.about": {
     es: "Atelier floral de alta gama en Barranquilla. Diseñamos composiciones a mano con flor importada y nacional de grado premium, y las entregamos el mismo día.",
