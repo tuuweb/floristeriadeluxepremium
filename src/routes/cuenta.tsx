@@ -108,8 +108,9 @@ function AuthCard() {
         password,
         options: { emailRedirectTo: window.location.origin },
       });
-      if (error) toast.error(error.message);
-      else if (data.user) {
+      if (error) {
+        toast.error(error.message);
+      } else if (data.user) {
         await supabase
           .from("profiles")
           .insert({ user_id: data.user.id, full_name: name, email })
@@ -127,7 +128,6 @@ function AuthCard() {
         <h1 className="mt-3 font-display text-3xl">
           {mode === "in" ? t("auth.signIn") : t("auth.signUp")}
         </h1>
-
         <div className="mt-8 space-y-5">
           {mode === "up" && (
             <div>
@@ -161,7 +161,6 @@ function AuthCard() {
             />
           </div>
         </div>
-
         <button
           type="submit"
           disabled={busy}
@@ -169,7 +168,6 @@ function AuthCard() {
         >
           {busy ? "…" : mode === "in" ? t("auth.signIn") : t("auth.signUp")}
         </button>
-
         <button
           type="button"
           onClick={() => setMode(mode === "in" ? "up" : "in")}
@@ -177,7 +175,6 @@ function AuthCard() {
         >
           {mode === "in" ? t("auth.noAccount") : t("auth.haveAccount")}
         </button>
-
         <Link
           to="/"
           className="mt-6 block text-center text-[10px] tracking-[0.24em] text-muted-foreground uppercase hover:text-primary"
@@ -205,16 +202,11 @@ function ProfileCard({ session }: { session: Session }) {
   const { data } = useQuery({
     queryKey: ["profile", uid],
     queryFn: async (): Promise<Profile | null> => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("user_id", uid)
-        .maybeSingle();
+      const { data, error } = await supabase.from("profiles").select("*").eq("user_id", uid).maybeSingle();
       if (error) throw error;
       return (data ?? null) as unknown as Profile | null;
     },
   });
-
   const [form, setForm] = useState({ full_name: "", phone: "", email: "" });
   useEffect(() => {
     setForm({
@@ -223,7 +215,6 @@ function ProfileCard({ session }: { session: Session }) {
       email: data?.email ?? session.user.email ?? "",
     });
   }, [data, session.user.email]);
-
   const save = async () => {
     const payload = { user_id: uid, ...form };
     const { error } = data?.id
@@ -235,7 +226,6 @@ function ProfileCard({ session }: { session: Session }) {
       qc.invalidateQueries({ queryKey: ["profile", uid] });
     }
   };
-
   return (
     <Section title={t("account.profile")}>
       <div className="grid gap-5 sm:grid-cols-3">
@@ -266,21 +256,23 @@ function ProfileCard({ session }: { session: Session }) {
   );
 }
 
-const emptyAddress = {
+const emptyAddress: Omit<CustomerAddress, "id" | "user_id" | "created_at" | "updated_at"> = {
   label: "Casa",
   recipient_name: "",
   recipient_phone: "",
   address: "",
   city: "Barranquilla",
   notes: "",
+  is_default: false,
 };
 
 function AddressesCard({ session }: { session: Session }) {
   const { t } = useI18n();
   const qc = useQueryClient();
   const uid = session.user.id;
-  const [draft, setDraft] = useState<typeof emptyAddress | null>(null);
-
+  const [draft, setDraft] = useState<Omit<CustomerAddress, "id" | "user_id" | "created_at" | "updated_at"> | null>(
+    null,
+  );
   const { data: addresses } = useQuery({
     queryKey: ["addresses", uid],
     queryFn: async (): Promise<CustomerAddress[]> => {
@@ -293,9 +285,7 @@ function AddressesCard({ session }: { session: Session }) {
       return (data ?? []) as unknown as CustomerAddress[];
     },
   });
-
   const refresh = () => qc.invalidateQueries({ queryKey: ["addresses", uid] });
-
   const save = async () => {
     if (!draft?.address) return;
     const { error } = await supabase.from("customer_addresses").insert({ user_id: uid, ...draft });
@@ -307,12 +297,10 @@ function AddressesCard({ session }: { session: Session }) {
     toast.success(t("account.saved"));
     refresh();
   };
-
   const remove = async (id: string) => {
     await supabase.from("customer_addresses").delete().eq("id", id);
     refresh();
   };
-
   const setDefault = async (id: string) => {
     await supabase.from("customer_addresses").update({ is_default: false }).eq("user_id", uid);
     await supabase.from("customer_addresses").update({ is_default: true }).eq("id", id);
@@ -321,28 +309,28 @@ function AddressesCard({ session }: { session: Session }) {
 
   return (
     <Section title={t("account.addresses")}>
-      <div className="space-y-4">
-        {(addresses ?? []).map((a) => (
+      <div className="grid gap-4 sm:grid-cols-2">
+        {addresses?.map((a) => (
           <div
             key={a.id}
-            className="flex flex-wrap items-start justify-between gap-4 border border-border/70 p-5"
+            className="flex items-start justify-between border border-border p-4 transition-colors hover:border-primary/40"
           >
-            <div className="flex gap-3">
-              <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-              <div>
-                <p className="text-sm">
+            <div className="flex items-start gap-3">
+              <MapPin className="mt-0.5 h-4 w-4 text-primary" />
+              <div className="text-sm">
+                <p className="font-medium">
                   {a.label}
                   {a.is_default && (
-                    <span className="ml-3 text-[9px] tracking-[0.24em] text-primary uppercase">
-                      {t("account.default")}
+                    <span className="ml-2 inline-flex items-center gap-1 text-[10px] text-primary">
+                      <Star className="h-3 w-3" /> {t("account.default")}
                     </span>
                   )}
                 </p>
-                <p className="mt-1 text-sm text-muted-foreground">
+                <p className="mt-1 text-muted-foreground">
                   {a.address}, {a.city}
                 </p>
                 {a.recipient_name && (
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-[11px] text-muted-foreground">
                     {a.recipient_name} · {a.recipient_phone}
                   </p>
                 )}
@@ -352,18 +340,18 @@ function AddressesCard({ session }: { session: Session }) {
               {!a.is_default && (
                 <button
                   onClick={() => setDefault(a.id)}
-                  title={t("account.setDefault")}
-                  className="press border border-border p-2.5 hover:border-primary"
+                  className="press p-2 text-muted-foreground hover:text-primary"
+                  aria-label={t("account.setDefault")}
                 >
-                  <Star className="h-3.5 w-3.5" />
+                  <Star className="h-4 w-4" />
                 </button>
               )}
               <button
                 onClick={() => remove(a.id)}
-                title={t("cta.delete")}
-                className="press border border-border p-2.5 hover:border-destructive"
+                className="press p-2 text-muted-foreground hover:text-destructive"
+                aria-label={t("account.delete")}
               >
-                <Trash2 className="h-3.5 w-3.5" />
+                <Trash2 className="h-4 w-4" />
               </button>
             </div>
           </div>
@@ -371,49 +359,79 @@ function AddressesCard({ session }: { session: Session }) {
       </div>
 
       {draft ? (
-        <div className="mt-6 border border-primary/40 p-5">
-          <div className="grid gap-5 sm:grid-cols-2">
-            {(
-              [
-                ["label", t("account.label")],
-                ["address", t("checkout.address")],
-                ["city", t("checkout.city")],
-                ["recipient_name", t("checkout.recipient")],
-                ["recipient_phone", t("checkout.phone")],
-                ["notes", t("checkout.notes")],
-              ] as const
-            ).map(([key, lbl]) => (
-              <div key={key}>
-                <span className={label}>{lbl}</span>
-                <input
-                  className={`${input} mt-2`}
-                  value={draft[key]}
-                  onChange={(e) => setDraft((p) => (p ? { ...p, [key]: e.target.value } : p))}
-                />
-              </div>
-            ))}
+        <div className="mt-6 grid gap-4 border border-border p-4">
+          <p className="eyebrow">{t("account.newAddress")}</p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <span className={label}>{t("account.label")}</span>
+              <input
+                className={`${input} mt-2`}
+                value={draft.label}
+                onChange={(e) => setDraft((d) => ({ ...d!, label: e.target.value }))}
+              />
+            </div>
+            <div>
+              <span className={label}>{t("account.recipient")}</span>
+              <input
+                className={`${input} mt-2`}
+                value={draft.recipient_name}
+                onChange={(e) => setDraft((d) => ({ ...d!, recipient_name: e.target.value }))}
+              />
+            </div>
+            <div>
+              <span className={label}>{t("checkout.phone")}</span>
+              <input
+                className={`${input} mt-2`}
+                value={draft.recipient_phone}
+                onChange={(e) => setDraft((d) => ({ ...d!, recipient_phone: e.target.value }))}
+              />
+            </div>
+            <div>
+              <span className={label}>{t("checkout.city")}</span>
+              <input
+                className={`${input} mt-2`}
+                value={draft.city}
+                onChange={(e) => setDraft((d) => ({ ...d!, city: e.target.value }))}
+              />
+            </div>
           </div>
-          <div className="mt-6 flex gap-3">
+          <div>
+            <span className={label}>{t("checkout.address")}</span>
+            <input
+              className={`${input} mt-2`}
+              value={draft.address}
+              onChange={(e) => setDraft((d) => ({ ...d!, address: e.target.value }))}
+            />
+          </div>
+          <div>
+            <span className={label}>{t("checkout.notes")}</span>
+            <input
+              className={`${input} mt-2`}
+              value={draft.notes}
+              onChange={(e) => setDraft((d) => ({ ...d!, notes: e.target.value }))}
+            />
+          </div>
+          <div className="flex gap-3">
             <button
               onClick={save}
-              className="press bg-primary px-7 py-3.5 text-[10px] tracking-[0.26em] text-primary-foreground uppercase"
+              className="press bg-primary px-6 py-3 text-[10px] tracking-[0.26em] text-primary-foreground uppercase"
             >
               {t("cta.save")}
             </button>
             <button
               onClick={() => setDraft(null)}
-              className="press border border-border px-7 py-3.5 text-[10px] tracking-[0.26em] uppercase"
+              className="press border border-border px-6 py-3 text-[10px] tracking-[0.26em] uppercase hover:border-primary"
             >
-              {t("cta.cancel")}
+              {t("account.cancel")}
             </button>
           </div>
         </div>
       ) : (
         <button
           onClick={() => setDraft({ ...emptyAddress })}
-          className="press mt-6 inline-flex items-center gap-2 border border-border px-6 py-3 text-[10px] tracking-[0.24em] uppercase hover:border-primary"
+          className="press mt-6 inline-flex items-center gap-2 border border-border px-6 py-3 text-[10px] tracking-[0.26em] uppercase hover:border-primary"
         >
-          <Plus className="h-3.5 w-3.5" /> {t("cta.add")}
+          <Plus className="h-4 w-4" /> {t("account.addAddress")}
         </button>
       )}
     </Section>
@@ -426,7 +444,6 @@ function OrdersCard({ session }: { session: Session }) {
   const { data: settings } = useQuery(settingsQuery);
   const trm = Number(settings?.["trm_cop_usd"] ?? 3950);
   const uid = session.user.id;
-
   const { data: orders } = useQuery({
     queryKey: ["my-orders", uid],
     queryFn: async (): Promise<Order[]> => {
@@ -439,37 +456,37 @@ function OrdersCard({ session }: { session: Session }) {
       return (data ?? []) as unknown as Order[];
     },
   });
-
   return (
     <Section title={t("account.orders")}>
-      {(orders ?? []).length === 0 ? (
-        <p className="text-sm text-muted-foreground">{t("account.noOrders")}</p>
-      ) : (
+      {orders && orders.length > 0 ? (
         <div className="space-y-4">
-          {(orders ?? []).map((o) => (
-            <div key={o.id} className="border border-border/70 p-5">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <p className="font-display text-lg">{o.order_number}</p>
-                <span className="text-[10px] tracking-[0.24em] text-primary uppercase">
+          {orders.map((o) => (
+            <div key={o.id} className="border border-border p-5">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="font-display text-lg">#{o.order_number}</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    {new Date(o.created_at).toLocaleDateString()}
+                  </p>
+                </div>
+                <span className="bg-primary/10 px-3 py-1 text-[10px] uppercase tracking-widest text-primary">
                   {o.status}
                 </span>
               </div>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {new Date(o.created_at).toLocaleDateString()} · {o.address}, {o.city}
+              <p className="mt-3 text-sm text-muted-foreground">
+                {o.address}, {o.city}
               </p>
-              <ul className="mt-4 space-y-1 text-sm text-muted-foreground">
-                {(o.items ?? []).map((it, i) => (
-                  <li key={i}>
-                    {it.qty} × {it.name}
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-4 text-sm">
-                {t("cart.total")}: {formatMoney(o.total_cop, currency, trm)}
-              </p>
+              <div className="mt-3 flex items-baseline justify-between">
+                <span className="text-xs text-muted-foreground">{t("cart.total")}</span>
+                <span className="font-display text-xl text-primary">
+                  {formatMoney(o.total_cop, currency, trm)}
+                </span>
+              </div>
             </div>
           ))}
         </div>
+      ) : (
+        <p className="text-sm text-muted-foreground">{t("account.noOrders")}</p>
       )}
     </Section>
   );
