@@ -1,10 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { Menu, ShoppingBag, X } from "lucide-react";
+import { Menu, ShoppingBag, User, X } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { categoriesQuery } from "@/lib/queries";
 import { useI18n } from "@/lib/i18n";
+import { supabase } from "@/integrations/supabase/client";
 
 const NAV = [
   { to: "/", key: "nav.home" },
@@ -19,6 +20,7 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [pop, setPop] = useState(false);
+  const [session, setSession] = useState(false);
   const prevCount = useRef(count);
   const { data: categories } = useQuery(categoriesQuery);
 
@@ -37,6 +39,12 @@ export default function Header() {
     const id = window.setTimeout(() => setPop(false), 600);
     return () => window.clearTimeout(id);
   }, [count]);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setSession(Boolean(data.session)));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(Boolean(s)));
+    return () => sub.subscription.unsubscribe();
+  }, []);
 
   return (
     <header
@@ -104,6 +112,17 @@ export default function Header() {
             ))}
           </div>
 
+          <Link
+            to="/cuenta"
+            aria-label={t("nav.account")}
+            className="press relative rounded-full border border-border p-2.5 transition-colors hover:border-primary/60 hover:bg-primary/10"
+          >
+            <User className="h-4 w-4 text-cream" />
+            {session && (
+              <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-primary" />
+            )}
+          </Link>
+
           <button
             onClick={() => setCartOpen(true)}
             aria-label={t("cta.cart")}
@@ -140,6 +159,13 @@ export default function Header() {
                 {t(item.key)}
               </Link>
             ))}
+            <Link
+              to="/cuenta"
+              onClick={() => setOpen(false)}
+              className="press py-2 text-sm tracking-[0.2em] uppercase"
+            >
+              {t("nav.account")}
+            </Link>
             <div className="hairline my-3" />
             <div className="flex gap-2 pb-2">
               {(["es", "en"] as const).map((l) => (
